@@ -111,7 +111,7 @@ git commit -m "docs: 更新 README"
 git push
 ```
 
-推送后 GitHub Actions 会自动构建并部署到 Pages，地址为 `https://chiaquan.github.io`。常用本地命令：
+推送后 GitHub Actions 会自动构建并部署到 Pages，地址为 `https://chiaquanlin.github.io`。常用本地命令：
 
 ```bash
 pnpm dev          # 本地预览
