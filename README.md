@@ -1,6 +1,6 @@
 # 个人博客
 
-基于 Astro 5 的静态个人博客，本地用 Git 管理，自动部署到 GitHub Pages。支持时间轴文章页、详情页、分类、标签、独立简历页、关于页、RSS、Sitemap 与基础 SEO，并内置响应式布局、深浅色模式、代码高亮和轻量微动效。
+基于 Astro 5 的静态个人博客，本地用 Git 管理，自动部署到 GitHub Pages。支持时间轴文章页、详情页、分类、标签、关于/简历合并页、RSS、Sitemap 与基础 SEO，并内置响应式布局、深浅色模式、代码高亮和轻量微动效。
 
 ## 技术栈
 
@@ -88,10 +88,10 @@ site: 'https://YOUR_USERNAME.github.io',
 
 - `:root` 是浅色主题，`html[data-theme='dark']` 是深色主题
 - 修改 `--accent`、`--accent-2`、`--bg`、`--surface`、`--text` 即可换色
-- 修改 `--font-sans`、`--font-mono` 可换字体；展示字体默认从 Google Fonts 加载 Sora 与 Noto Sans SC，可在 `src/layouts/BaseLayout.astro` 中移除或替换
+- 英文与代码默认使用 Consolas；中文字体默认从 Google Fonts 加载 Noto Sans SC，可在 `src/layouts/BaseLayout.astro` 中移除或替换
 - 导航、卡片栅格、间距在 `.site-header`、`.post-grid`、`.post-card` 等规则中调整
 - 首页整屏背景图由 `src/consts.ts` 的 `SITE_HERO_IMAGE` 指定，替换 `public/hero.jpg` 或修改该路径即可；默认占位图可运行 `pnpm generate:hero` 重新生成
-- 个人简历是独立页面 `/resume`，内容在 `src/components/ResumeCard.astro`
+- 个人简历与关于页已合并为 `/about`，简历内容在 `src/components/ResumeCard.astro`
 - 文章页左侧时间线、右侧分类筛选，位于 `src/pages/blog.astro`
 - 新建文章：`pnpm new:post "文章标题"`，会在 `src/content/blog/` 生成带 frontmatter 的 Markdown
 - 主题切换按钮会读取系统偏好，并把用户选择保存到 `localStorage`

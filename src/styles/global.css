@@ -16,8 +16,8 @@
   --radius-lg: 12px;
   --content-width: 1180px;
   --text-width: 780px;
-  --font-sans: 'Inter', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', 'Segoe UI', system-ui, sans-serif;
-  --font-display: 'Sora', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+  --font-sans: Consolas, 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', 'Segoe UI', system-ui, sans-serif;
+  --font-display: Consolas, 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
   --font-mono: Consolas, 'Cascadia Code', 'JetBrains Mono', 'Courier New', monospace;
   color-scheme: light;
 }
@@ -1683,25 +1683,25 @@ html.js [data-reveal].is-visible {
 /* Smooth page transitions */
 @media (prefers-reduced-motion: no-preference) {
   ::view-transition-old(root) {
-    animation: page-fade-out 160ms ease both;
+    animation: page-out 420ms cubic-bezier(0.4, 0, 0.2, 1) both;
   }
 
   ::view-transition-new(root) {
-    animation: page-fade-in 260ms ease both;
+    animation: page-in 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 }
 
-@keyframes page-fade-out {
+@keyframes page-out {
   to {
     opacity: 0;
-    transform: translateY(-8px);
+    transform: translateY(-22px) scale(0.985);
   }
 }
 
-@keyframes page-fade-in {
+@keyframes page-in {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(30px) scale(0.995);
   }
 }
 

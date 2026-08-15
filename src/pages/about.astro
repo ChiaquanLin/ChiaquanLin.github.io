@@ -1,14 +1,18 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import ResumeCard from '../components/ResumeCard.astro';
 import { SITE_TITLE } from '../consts';
 ---
 
 <BaseLayout title="关于" description={`关于${SITE_TITLE}和它的作者`}>
   <header class="page-header">
-    <p class="eyebrow">About</p>
+    <p class="eyebrow">About / Resume</p>
     <h1>关于我</h1>
-    <p>这里应该写一段简短的自我介绍，替换成你自己的内容。</p>
+    <p>个人简历与博客简介已合并到这一页，简历内容修改 src/components/ResumeCard.astro 即可更新。</p>
   </header>
+  <section class="resume-page">
+    <ResumeCard />
+  </section>
   <section class="about-content">
     <div class="about-card">
       <h2>这个博客</h2>

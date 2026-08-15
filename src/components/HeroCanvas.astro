@@ -27,10 +27,6 @@ const hasExtra = Astro.slots.has('default');
       <h1 class="hero-title">{title}</h1>
       <p class="hero-role" aria-label="博客主题">记录 <span id="hero-role">技术</span><span class="role-caret" aria-hidden="true"></span></p>
       <p class="hero-description">{description}</p>
-      <div class="hero-actions">
-        <a class="btn btn-primary" href="/blog">浏览文章</a>
-        <a class="btn btn-ghost" href="/resume">查看简历</a>
-      </div>
     </div>
     <slot />
   </div>
