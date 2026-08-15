@@ -10,7 +10,13 @@ const { title, description } = Astro.props;
 const hasExtra = Astro.slots.has('default');
 ---
 
-<section class="hero" id="hero" data-extra={hasExtra ? 'true' : 'false'} aria-label="博客简介">
+<section
+  class="hero"
+  id="hero"
+  data-extra={hasExtra ? 'true' : 'false'}
+  data-image={SITE_HERO_IMAGE ? 'true' : 'false'}
+  aria-label="博客简介"
+>
   {
     SITE_HERO_IMAGE ? (
       <img class="hero-image" src={SITE_HERO_IMAGE} alt="" />
@@ -18,8 +24,6 @@ const hasExtra = Astro.slots.has('default');
       <canvas id="hero-canvas" aria-hidden="true"></canvas>
     )
   }
-  <div class="hero-image-overlay" aria-hidden="true"></div>
-  <div class="hero-vignette" aria-hidden="true"></div>
   <div class="hero-frame" aria-hidden="true"></div>
   <div class="hero-layout" id="hero-layout">
     <div class="hero-copy">

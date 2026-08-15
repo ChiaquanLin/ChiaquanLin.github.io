@@ -339,6 +339,10 @@ html[data-theme='dark'] .theme-icon-moon {
   background: transparent;
 }
 
+.hero[data-image='true'] {
+  align-items: flex-start;
+}
+
 #hero-canvas {
   position: absolute;
   inset: 0;
@@ -353,29 +357,6 @@ html[data-theme='dark'] .theme-icon-moon {
   width: 100%;
   height: 100%;
   object-fit: cover;
-}
-
-.hero-image-overlay {
-  position: absolute;
-  inset: 0;
-  z-index: -3;
-  pointer-events: none;
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--bg) 88%, transparent) 0%,
-    color-mix(in srgb, var(--bg) 42%, transparent) 55%,
-    color-mix(in srgb, var(--bg) 92%, transparent) 100%
-  );
-}
-
-.hero-vignette {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--bg) 18%, transparent) 0%, transparent 55%),
-    linear-gradient(0deg, color-mix(in srgb, var(--bg) 82%, transparent) 0%, transparent 50%);
 }
 
 .hero-frame {
@@ -415,6 +396,48 @@ html[data-theme='dark'] .theme-icon-moon {
 .hero[data-extra='false'] .hero-actions,
 .hero[data-extra='false'] .hero-description {
   margin-inline: auto;
+}
+
+.hero[data-image='true'] .hero-layout {
+  display: block;
+  width: min(100%, 1040px);
+  margin-inline: 0;
+  padding-top: clamp(3rem, 10vh, 8rem);
+  text-align: left;
+}
+
+.hero[data-image='true'] .hero-copy {
+  text-align: left;
+}
+
+.hero[data-image='true'] .eyebrow {
+  border-color: rgb(255 255 255 / 0.3);
+  background: rgb(0 0 0 / 0.22);
+  color: #ffffff;
+  box-shadow: 0 4px 18px rgb(0 0 0 / 0.18);
+}
+
+.hero[data-image='true'] .hero-title {
+  color: #ffffff;
+  text-shadow: 0 2px 32px rgb(0 0 0 / 0.45);
+}
+
+.hero[data-image='true'] .hero-role {
+  color: #7ce8d8;
+}
+
+.hero[data-image='true'] .hero-description {
+  color: rgb(236 241 239 / 0.92);
+  text-shadow: 0 1px 14px rgb(0 0 0 / 0.4);
+}
+
+.hero[data-image='true'] .hero-frame {
+  border-color: rgb(255 255 255 / 0.18);
+}
+
+.hero[data-image='true'] .hero-scroll {
+  border-color: rgb(255 255 255 / 0.35);
+  background: rgb(0 0 0 / 0.18);
 }
 
 .hero-copy {
@@ -1756,6 +1779,10 @@ html.js [data-reveal].is-visible {
   .hero {
     min-height: auto;
     padding: 3.5rem 1rem 4.5rem;
+  }
+
+  .hero[data-image='true'] .hero-layout {
+    padding-top: 0.5rem;
   }
 
   .hero-title {

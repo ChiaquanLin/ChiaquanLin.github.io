@@ -98,11 +98,20 @@ site: 'https://YOUR_USERNAME.github.io',
 
 ### 写新文章
 
-在 `src/content/blog/` 新建 Markdown 文件，例如 `my-post.md`；也可以直接用命令生成模板：
+在 `src/content/blog/` 新建 Markdown 文件，例如 `my-post.md`；也可以直接用可复用脚本生成模板：
 
 ```bash
+# 最简单的用法
 pnpm new:post "我的新文章"
+
+# 指定摘要、标签、分类
+pnpm new:post --title "我的新文章" --description "一句话摘要" --tags 前端,设计 --categories 技术
+
+# 创建草稿（draft: true）
+pnpm new:post --title "尚未完成的文章" --draft
 ```
+
+脚本会自动生成唯一的文件名，不会覆盖已有文章。也可以手动往 `src/content/blog/` 添加任意 `.md` 文件，首页、文章页、时间轴、分类、标签和 RSS 会自动包含它。
 
 ```md
 ---

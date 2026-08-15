@@ -12,6 +12,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "new:post": "node scripts/new-post.mjs",
+    "post:new": "node scripts/new-post.mjs",
     "generate:hero": "node scripts/generate-hero.mjs"
   },
   "dependencies": {
