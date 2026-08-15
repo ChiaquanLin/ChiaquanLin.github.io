@@ -1,0 +1,34 @@
+---
+import { formatDate, readingTime, encodeSlug } from '../lib/posts';
+import type { Post } from '../lib/posts';
+
+interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+---
+
+<article class="featured-card">
+  <a class="featured-link" href={`/blog/${post.id}/`}>
+    <div class="featured-main">
+      <p class="eyebrow">Featured</p>
+      <h2>{post.data.title}</h2>
+      <p>{post.data.description}</p>
+      <div class="featured-meta">
+        <time datetime={post.data.pubDate.toISOString()}>
+          {formatDate(post.data.pubDate)}
+        </time>
+        <span>{readingTime(post)}</span>
+        {post.data.categories.map((category) => (
+          <span>{category}</span>
+        ))}
+      </div>
+      <span class="read-more">阅读全文</span>
+    </div>
+    <div class="featured-side" aria-hidden="true">
+      <span class="featured-index">01</span>
+      <span class="featured-mark"></span>
+    </div>
+  </a>
+</article>

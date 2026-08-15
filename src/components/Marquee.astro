@@ -1,0 +1,19 @@
+---
+const items = [
+  'Astro',
+  'TypeScript',
+  'Design',
+  'Git',
+  'GitHub Pages',
+  'RSS',
+  'SEO',
+  'Responsive',
+];
+const track = [...items, ...items];
+---
+
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    {track.map((item) => <span class="marquee-item">{item}</span>)}
+  </div>
+</div>

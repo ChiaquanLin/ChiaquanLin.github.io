@@ -9,7 +9,7 @@ interface Props {
 const { post } = Astro.props;
 ---
 
-<article class="post-card">
+<article class="post-card" data-categories={post.data.categories.join(' ')}>
   <a class="post-card-link" href={`/blog/${post.id}/`}>
     <div class="post-card-meta">
       <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>

@@ -4,17 +4,58 @@ import PostCard from '../components/PostCard.astro';
 import { getPublishedPosts } from '../lib/posts';
 
 const posts = await getPublishedPosts();
+
+const categoryCounts = new Map<string, number>();
+for (const post of posts) {
+  for (const category of post.data.categories) {
+    categoryCounts.set(category, (categoryCounts.get(category) ?? 0) + 1);
+  }
+}
+const categories = [...categoryCounts.entries()];
 ---
 
 <BaseLayout title="文章" description="全部文章列表">
   <header class="page-header">
     <p class="eyebrow">Posts</p>
     <h1>全部文章</h1>
-    <p>按发布时间倒序排列，共 {posts.length} 篇。</p>
+    <p>按发布时间倒序排列，共 {posts.length} 篇。点击分类快速筛选。</p>
   </header>
-  <section class="section">
-    <div class="post-grid">
+  <section class="section" data-reveal>
+    <div class="filter-bar" id="filter-bar" aria-label="按分类筛选">
+      <button class="filter-chip active" type="button" data-filter="all">
+        全部 <span>{posts.length}</span>
+      </button>
+      {
+        categories.map(([category, count]) => (
+          <button class="filter-chip" type="button" data-filter={category}>
+            {category} <span>{count}</span>
+          </button>
+        ))
+      }
+    </div>
+    <div class="post-grid" id="post-grid">
       {posts.map((post) => <PostCard post={post} />)}
     </div>
   </section>
 </BaseLayout>
+
+<script>
+  const bar = document.getElementById('filter-bar');
+  const cards = [...document.querySelectorAll('.post-card')];
+
+  bar?.addEventListener('click', (event) => {
+    const chip = event.target.closest('.filter-chip');
+    if (!chip) return;
+
+    bar.querySelectorAll('.filter-chip').forEach((item) => item.classList.remove('active'));
+    chip.classList.add('active');
+
+    const filter = chip.dataset.filter;
+    for (const card of cards) {
+      const matches =
+        filter === 'all' || card.dataset.categories?.split(' ').includes(filter);
+      card.classList.toggle('is-filtered-out', !matches);
+      if (matches) card.classList.add('is-visible');
+    }
+  });
+</script>
