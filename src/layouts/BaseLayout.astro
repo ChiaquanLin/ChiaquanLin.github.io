@@ -43,12 +43,10 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? SITE_URL).href;
       (() => {
         try {
           const saved = localStorage.getItem('theme');
-          const theme =
-            saved ||
-            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+          const theme = saved || 'dark';
           document.documentElement.dataset.theme = theme;
         } catch {
-          document.documentElement.dataset.theme = 'light';
+          document.documentElement.dataset.theme = 'dark';
         }
         document.documentElement.classList.add('js');
       })();
