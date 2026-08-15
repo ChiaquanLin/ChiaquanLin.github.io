@@ -368,6 +368,16 @@ html[data-theme='dark'] .theme-icon-moon {
   pointer-events: none;
 }
 
+.hero-fade {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--bg) 82%, transparent), transparent 7rem),
+    linear-gradient(0deg, color-mix(in srgb, var(--bg) 86%, transparent), transparent clamp(4rem, 18vh, 11rem));
+}
+
 .hero-layout {
   position: relative;
   z-index: 2;
@@ -403,6 +413,8 @@ html[data-theme='dark'] .theme-icon-moon {
   width: min(100%, 1040px);
   margin-inline: 0;
   padding-top: clamp(3rem, 10vh, 8rem);
+  padding-left: clamp(2.5rem, 8vw, 8rem);
+  padding-right: 2.5rem;
   text-align: left;
 }
 
@@ -1783,6 +1795,8 @@ html.js [data-reveal].is-visible {
 
   .hero[data-image='true'] .hero-layout {
     padding-top: 0.5rem;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
   }
 
   .hero-title {
