@@ -1,7 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PostCard from '../components/PostCard.astro';
-import { getPublishedPosts } from '../lib/posts';
+import { getPublishedPosts, formatShortDate } from '../lib/posts';
+import type { Post } from '../lib/posts';
 
 const posts = await getPublishedPosts();
 
@@ -12,29 +13,65 @@ for (const post of posts) {
   }
 }
 const categories = [...categoryCounts.entries()];
+
+const groups = new Map<number, Post[]>();
+for (const post of posts) {
+  const year = post.data.pubDate.getFullYear();
+  const list = groups.get(year) ?? [];
+  list.push(post);
+  groups.set(year, list);
+}
+const years = [...groups.entries()];
 ---
 
 <BaseLayout title="文章" description="全部文章列表">
   <header class="page-header">
     <p class="eyebrow">Posts</p>
     <h1>全部文章</h1>
-    <p>按发布时间倒序排列，共 {posts.length} 篇。点击分类快速筛选。</p>
+    <p>左侧为时间线，右侧可点击分类快速筛选，共 {posts.length} 篇。</p>
   </header>
   <section class="section" data-reveal>
-    <div class="filter-bar" id="filter-bar" aria-label="按分类筛选">
-      <button class="filter-chip active" type="button" data-filter="all">
-        全部 <span>{posts.length}</span>
-      </button>
-      {
-        categories.map(([category, count]) => (
-          <button class="filter-chip" type="button" data-filter={category}>
-            {category} <span>{count}</span>
+    <div class="blog-layout">
+      <aside class="blog-aside" aria-label="文章时间线">
+        <h2 class="blog-aside-title">时间线</h2>
+        {
+          years.map(([year, yearPosts]) => (
+            <div class="blog-aside-year-group">
+              <h3 class="blog-aside-year">{year}</h3>
+              <ul class="blog-aside-list">
+                {
+                  yearPosts.map((post) => (
+                    <li class="blog-aside-item">
+                      <time datetime={post.data.pubDate.toISOString()}>
+                        {formatShortDate(post.data.pubDate)}
+                      </time>
+                      <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+                    </li>
+                  ))
+                }
+              </ul>
+            </div>
+          ))
+        }
+      </aside>
+
+      <div class="blog-main">
+        <div class="filter-bar" id="filter-bar" aria-label="按分类筛选">
+          <button class="filter-chip active" type="button" data-filter="all">
+            全部 <span>{posts.length}</span>
           </button>
-        ))
-      }
-    </div>
-    <div class="post-grid" id="post-grid">
-      {posts.map((post) => <PostCard post={post} />)}
+          {
+            categories.map(([category, count]) => (
+              <button class="filter-chip" type="button" data-filter={category}>
+                {category} <span>{count}</span>
+              </button>
+            ))
+          }
+        </div>
+        <div class="post-grid" id="post-grid">
+          {posts.map((post) => <PostCard post={post} />)}
+        </div>
+      </div>
     </div>
   </section>
 </BaseLayout>
@@ -52,8 +89,7 @@ const categories = [...categoryCounts.entries()];
 
     const filter = chip.dataset.filter;
     for (const card of cards) {
-      const matches =
-        filter === 'all' || card.dataset.categories?.split(' ').includes(filter);
+      const matches = filter === 'all' || card.dataset.categories?.split(' ').includes(filter);
       card.classList.toggle('is-filtered-out', !matches);
       if (matches) card.classList.add('is-visible');
     }

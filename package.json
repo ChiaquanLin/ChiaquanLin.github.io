@@ -10,11 +10,16 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "new:post": "node scripts/new-post.mjs",
+    "generate:hero": "node scripts/generate-hero.mjs"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.11",
     "@astrojs/sitemap": "^3.2.1",
     "astro": "^5.7.0"
+  },
+  "devDependencies": {
+    "sharp": "^0.34.5"
   }
 }
