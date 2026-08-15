@@ -77,21 +77,30 @@ const years = [...groups.entries()];
 </BaseLayout>
 
 <script>
-  const bar = document.getElementById('filter-bar');
-  const cards = [...document.querySelectorAll('.post-card')];
+  const setupFilter = () => {
+    if (window.__dshBlogFilterBound) return;
+    window.__dshBlogFilterBound = true;
 
-  bar?.addEventListener('click', (event) => {
-    const chip = event.target.closest('.filter-chip');
-    if (!chip) return;
+    document.addEventListener('click', (event) => {
+      const chip = event.target.closest('.filter-chip');
+      if (!chip) return;
 
-    bar.querySelectorAll('.filter-chip').forEach((item) => item.classList.remove('active'));
-    chip.classList.add('active');
+      const bar = chip.closest('#filter-bar');
+      if (!bar) return;
 
-    const filter = chip.dataset.filter;
-    for (const card of cards) {
-      const matches = filter === 'all' || card.dataset.categories?.split(' ').includes(filter);
-      card.classList.toggle('is-filtered-out', !matches);
-      if (matches) card.classList.add('is-visible');
-    }
-  });
+      bar.querySelectorAll('.filter-chip').forEach((item) => item.classList.remove('active'));
+      chip.classList.add('active');
+
+      const filter = chip.dataset.filter;
+      const cards = [...document.querySelectorAll('.post-card')];
+      for (const card of cards) {
+        const matches = filter === 'all' || card.dataset.categories?.split(' ').includes(filter);
+        card.classList.toggle('is-filtered-out', !matches);
+        if (matches) card.classList.add('is-visible');
+      }
+    });
+  };
+
+  setupFilter();
+  document.addEventListener('astro:page-load', setupFilter);
 </script>
