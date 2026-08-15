@@ -419,7 +419,7 @@ html[data-theme='dark'] .theme-icon-moon {
 
 .hero-title {
   margin: 0;
-  padding-inline: 0.06em;
+  padding-inline: 0.2em;
   font-family: 'Qirfahuja', var(--font-display);
   font-size: clamp(5rem, 13.5vw, 12rem);
   font-weight: 1000;
