@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PostCard from '../components/PostCard.astro';
-import GitHubLink from '../components/GitHubLink.astro';
 import { getPublishedPosts, formatShortDate } from '../lib/posts';
 import type { Post } from '../lib/posts';
 
@@ -75,9 +74,6 @@ const years = [...groups.entries()];
       </div>
     </div>
   </section>
-  <div class="github-log-wrap">
-    <GitHubLink />
-  </div>
 </BaseLayout>
 
 <script>

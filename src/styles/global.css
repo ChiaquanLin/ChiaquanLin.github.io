@@ -1587,13 +1587,7 @@ html[data-theme='dark'] .post-content pre.astro-code span {
 .about-content {
   width: min(100% - 2rem, var(--text-width));
   margin: 0 auto;
-  padding: 2.5rem 0 3rem;
-}
-
-.github-log-wrap {
-  display: flex;
-  justify-content: center;
-  padding: 0 1rem 4.5rem;
+  padding: 2.5rem 0 5rem;
 }
 
 .github-log {
@@ -1621,6 +1615,11 @@ html[data-theme='dark'] .post-content pre.astro-code span {
 
 .github-log-handle {
   color: #9db3cf;
+}
+
+.site-footer .github-log {
+  padding: 0.45rem 0.85rem;
+  font-size: 0.85rem;
 }
 
 .resume-page {
