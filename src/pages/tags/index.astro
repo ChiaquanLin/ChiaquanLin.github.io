@@ -1,0 +1,26 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getTags } from '../../lib/posts';
+
+const tags = await getTags();
+---
+
+<BaseLayout title="标签" description="按标签浏览文章">
+  <header class="page-header">
+    <p class="eyebrow">Tags</p>
+    <h1>标签</h1>
+    <p>共 {tags.length} 个标签，点击查看对应文章。</p>
+  </header>
+  <section class="section">
+    <div class="taxonomy-grid">
+      {
+        tags.map((tag) => (
+          <a class="taxonomy-card" href={`/tags/${encodeURIComponent(tag.name)}`}>
+            <span>#{tag.name}</span>
+            <span class="taxonomy-count">{tag.count}</span>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>

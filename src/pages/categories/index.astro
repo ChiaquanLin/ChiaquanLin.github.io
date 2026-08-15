@@ -1,0 +1,26 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCategories } from '../../lib/posts';
+
+const categories = await getCategories();
+---
+
+<BaseLayout title="分类" description="按分类浏览文章">
+  <header class="page-header">
+    <p class="eyebrow">Categories</p>
+    <h1>分类</h1>
+    <p>共 {categories.length} 个分类，点击查看对应文章。</p>
+  </header>
+  <section class="section">
+    <div class="taxonomy-grid">
+      {
+        categories.map((category) => (
+          <a class="taxonomy-card" href={`/categories/${encodeURIComponent(category.name)}`}>
+            <span>{category.name}</span>
+            <span class="taxonomy-count">{category.count}</span>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>

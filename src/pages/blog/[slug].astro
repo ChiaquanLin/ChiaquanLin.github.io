@@ -1,0 +1,72 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { render } from 'astro:content';
+import { getPublishedPosts, formatDate, readingTime, encodeSlug } from '../../lib/posts';
+import type { Post } from '../../lib/posts';
+
+export async function getStaticPaths() {
+  const posts = await getPublishedPosts();
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props as { post: Post };
+const { Content } = await render(post);
+
+const allPosts = await getPublishedPosts();
+const currentIndex = allPosts.findIndex((item) => item.id === post.id);
+const prevPost = allPosts[currentIndex + 1];
+const nextPost = allPosts[currentIndex - 1];
+
+const { title, description, pubDate, tags, categories } = post.data;
+---
+
+<BaseLayout title={title} description={description}>
+  <article class="post-article">
+    <header class="post-header">
+      <div class="post-meta-line">
+        <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
+        <span>{readingTime(post)}</span>
+      </div>
+      <h1>{title}</h1>
+      <p class="post-description">{description}</p>
+      <div class="post-taxonomies">
+        {categories.map((category) => (
+          <a class="tax-link" href={`/categories/${encodeSlug(category)}`}>
+            {category}
+          </a>
+        ))}
+        {tags.map((tag) => (
+          <a class="tax-link" href={`/tags/${encodeSlug(tag)}`}>
+            #{tag}
+          </a>
+        ))}
+      </div>
+    </header>
+
+    <div class="post-content">
+      <Content />
+    </div>
+
+    <nav class="post-pagination" aria-label="文章导航">
+      {
+        prevPost && (
+          <a class="pager" href={`/blog/${prevPost.id}/`}>
+            <span>上一篇</span>
+            <strong>{prevPost.data.title}</strong>
+          </a>
+        )
+      }
+      {
+        nextPost && (
+          <a class="pager pager-next" href={`/blog/${nextPost.id}/`}>
+            <span>下一篇</span>
+            <strong>{nextPost.data.title}</strong>
+          </a>
+        )
+      }
+    </nav>
+  </article>
+</BaseLayout>

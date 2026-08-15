@@ -1,0 +1,50 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostCard from '../components/PostCard.astro';
+import { getPublishedPosts, getTags } from '../lib/posts';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+
+const posts = await getPublishedPosts();
+const tags = await getTags();
+const latest = posts.slice(0, 6);
+---
+
+<BaseLayout>
+  <section class="hero">
+    <div class="hero-inner">
+      <p class="eyebrow">Personal Blog</p>
+      <h1>{SITE_TITLE}</h1>
+      <p>{SITE_DESCRIPTION}</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="/blog">浏览文章</a>
+        <a class="btn btn-ghost" href="/about">关于我</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-heading">
+      <h2>最新文章</h2>
+      <a href="/blog">查看全部</a>
+    </div>
+    <div class="post-grid">
+      {latest.map((post) => <PostCard post={post} />)}
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-heading">
+      <h2>标签</h2>
+      <a href="/tags">全部标签</a>
+    </div>
+    <div class="tag-cloud">
+      {
+        tags.map((tag) => (
+          <a class="tag-chip tag-link" href={`/tags/${encodeURIComponent(tag.name)}`}>
+            #{tag.name}
+          </a>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>

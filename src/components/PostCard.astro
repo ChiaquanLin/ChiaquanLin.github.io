@@ -1,0 +1,29 @@
+---
+import { formatDate, readingTime } from '../lib/posts';
+import type { Post } from '../lib/posts';
+
+interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+---
+
+<article class="post-card">
+  <a class="post-card-link" href={`/blog/${post.id}/`}>
+    <div class="post-card-meta">
+      <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
+      <span aria-label="预计阅读时长">{readingTime(post)}</span>
+    </div>
+    <h2 class="post-card-title">{post.data.title}</h2>
+    <p class="post-card-excerpt">{post.data.description}</p>
+    <div class="post-card-footer">
+      <span class="read-more">阅读全文</span>
+      <div class="post-card-tags" aria-label="文章标签">
+        {post.data.tags.slice(0, 3).map((tag) => (
+          <span class="tag-chip">{tag}</span>
+        ))}
+      </div>
+    </div>
+  </a>
+</article>

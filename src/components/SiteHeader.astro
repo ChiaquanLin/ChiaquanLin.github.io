@@ -1,0 +1,66 @@
+---
+import { SITE_TITLE } from '../consts';
+
+const links = [
+  { href: '/', label: '首页' },
+  { href: '/blog', label: '文章' },
+  { href: '/archive', label: '归档' },
+  { href: '/tags', label: '标签' },
+  { href: '/about', label: '关于' },
+];
+
+const pathname = Astro.url.pathname;
+---
+
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true">B</span>
+      <span class="brand-name">{SITE_TITLE}</span>
+    </a>
+    <nav class="site-nav" aria-label="主导航">
+      {
+        links.map((link) => (
+          <a
+            href={link.href}
+            class:list={[
+              'nav-link',
+              {
+                active:
+                  pathname === link.href ||
+                  (link.href !== '/' && pathname.startsWith(link.href)),
+              },
+            ]}
+          >
+            {link.label}
+          </a>
+        ))
+      }
+    </nav>
+    <button
+      id="theme-toggle"
+      class="icon-button"
+      type="button"
+      aria-label="切换深浅色模式"
+      title="切换深浅色模式"
+    >
+      <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="4" />
+        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+      </svg>
+      <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" />
+      </svg>
+    </button>
+  </div>
+</header>
+
+<script>
+  const button = document.getElementById('theme-toggle');
+  const root = document.documentElement;
+  button?.addEventListener('click', () => {
+    const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+    root.dataset.theme = next;
+    localStorage.setItem('theme', next);
+  });
+</script>

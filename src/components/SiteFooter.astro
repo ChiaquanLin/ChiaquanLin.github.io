@@ -1,0 +1,19 @@
+---
+import { SITE_TITLE } from '../consts';
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div>
+      <p class="footer-title">{SITE_TITLE}</p>
+      <p class="footer-note">记录技术、设计与生活</p>
+    </div>
+    <nav class="footer-links" aria-label="页脚导航">
+      <a href="/about">关于</a>
+      <a href="/archive">归档</a>
+      <a href="/rss.xml">RSS</a>
+    </nav>
+    <p class="footer-meta">© {year} · 使用 Astro 构建</p>
+  </div>
+</footer>
