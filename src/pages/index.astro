@@ -3,7 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import HeroCanvas from '../components/HeroCanvas.astro';
 import PostCard from '../components/PostCard.astro';
 import { getPublishedPosts, getTags, getCategories } from '../lib/posts';
-import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+import { SITE_TITLE } from '../consts';
 
 const posts = await getPublishedPosts();
 const tags = await getTags();
@@ -11,7 +11,7 @@ const categories = await getCategories();
 ---
 
 <BaseLayout>
-  <HeroCanvas title={SITE_TITLE} description={SITE_DESCRIPTION} />
+  <HeroCanvas title={SITE_TITLE} />
 
   <div class="home-sections">
     <section class="section" id="posts" data-reveal>

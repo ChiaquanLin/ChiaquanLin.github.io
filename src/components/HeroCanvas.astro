@@ -3,10 +3,9 @@ import { SITE_HERO_IMAGE } from '../consts';
 
 interface Props {
   title: string;
-  description: string;
 }
 
-const { title, description } = Astro.props;
+const { title } = Astro.props;
 const hasExtra = Astro.slots.has('default');
 ---
 
@@ -28,10 +27,7 @@ const hasExtra = Astro.slots.has('default');
   }
   <div class="hero-layout" id="hero-layout">
     <div class="hero-copy">
-      <p class="eyebrow">Personal Blog</p>
       <h1 class="hero-title">{title}</h1>
-      <p class="hero-role" aria-label="博客主题">记录 <span id="hero-role">技术</span><span class="role-caret" aria-hidden="true"></span></p>
-      <p class="hero-description">{description}</p>
     </div>
     <slot />
   </div>
@@ -42,7 +38,6 @@ const hasExtra = Astro.slots.has('default');
   (() => {
     const hero = document.getElementById('hero');
     const layout = document.getElementById('hero-layout');
-    const roleEl = document.getElementById('hero-role');
     if (!hero) return;
 
     const canvas = document.getElementById('hero-canvas');
@@ -176,22 +171,6 @@ const hasExtra = Astro.slots.has('default');
     document.getElementById('theme-toggle')?.addEventListener('click', () => {
       window.setTimeout(readPalette, 0);
     });
-
-    const roles = ['技术', '设计', '生活', '写作'];
-    if (roleEl && !reducedMotion) {
-      let index = 0;
-      roleEl.textContent = roles[0];
-      window.setInterval(() => {
-        roleEl.classList.add('role-swap-out');
-        window.setTimeout(() => {
-          index = (index + 1) % roles.length;
-          roleEl.textContent = roles[index];
-          roleEl.classList.remove('role-swap-out');
-          roleEl.classList.add('role-swap-in');
-          window.setTimeout(() => roleEl.classList.remove('role-swap-in'), 250);
-        }, 220);
-      }, 2600);
-    }
 
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) {
