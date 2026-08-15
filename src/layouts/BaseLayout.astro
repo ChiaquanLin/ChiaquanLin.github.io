@@ -118,8 +118,12 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? SITE_URL).href;
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 
-  const revealTargets = document.querySelectorAll('[data-reveal]');
-  if ('IntersectionObserver' in window) {
+  const setupReveal = () => {
+    const targets = document.querySelectorAll('[data-reveal]');
+    if (!('IntersectionObserver' in window)) {
+      targets.forEach((target) => target.classList.add('is-visible'));
+      return;
+    }
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
@@ -131,8 +135,14 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? SITE_URL).href;
       },
       { threshold: 0.12, rootMargin: '0px 0px -6% 0px' },
     );
-    revealTargets.forEach((target) => observer.observe(target));
-  } else {
-    revealTargets.forEach((target) => target.classList.add('is-visible'));
+    targets.forEach((target) => observer.observe(target));
+    window.setTimeout(() => {
+      targets.forEach((target) => target.classList.add('is-visible'));
+    }, 900);
+  };
+  setupReveal();
+  if (!window.__dshRevealBound) {
+    window.__dshRevealBound = true;
+    document.addEventListener('astro:page-load', setupReveal);
   }
 </script>
