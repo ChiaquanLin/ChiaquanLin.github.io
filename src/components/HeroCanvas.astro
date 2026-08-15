@@ -169,7 +169,9 @@ const hasExtra = Astro.slots.has('default');
     window.addEventListener('resize', resize);
     hero.addEventListener('pointermove', handlePointer, { passive: true });
     hero.addEventListener('pointerleave', clearPointer);
-    document.getElementById('theme-toggle')?.addEventListener('click', readPalette);
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      window.setTimeout(readPalette, 0);
+    });
 
     const roles = ['技术', '设计', '生活', '写作'];
     if (roleEl && !reducedMotion) {

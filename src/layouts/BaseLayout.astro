@@ -90,6 +90,14 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? SITE_URL).href;
   window.addEventListener('resize', updateScrollUI, { passive: true });
   updateScrollUI();
 
+  document.addEventListener('click', (event) => {
+    const button = event.target.closest('#theme-toggle');
+    if (!button) return;
+    const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+    root.dataset.theme = next;
+    localStorage.setItem('theme', next);
+  });
+
   topButton?.addEventListener('click', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });

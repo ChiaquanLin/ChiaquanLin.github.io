@@ -73,13 +73,13 @@ pnpm preview
 export const SITE_TITLE = '个人博客';
 export const SITE_DESCRIPTION = '记录技术、设计与生活的个人博客';
 export const SITE_AUTHOR = '你的名字';
-export const SITE_URL = 'https://YOUR_USERNAME.github.io';
+export const SITE_URL = 'https://Chiaquan.github.io';
 ```
 
 编辑 `astro.config.mjs`，把 `site` 改成你的真实 Pages 地址：
 
 ```js
-site: 'https://YOUR_USERNAME.github.io',
+site: 'https://Chiaquan.github.io',
 ```
 
 ### 颜色、字体与布局
@@ -145,10 +145,10 @@ git init -b main
 git add .
 git commit -m "init: Astro personal blog"
 
-# 3. 关联远程仓库，把 YOUR_USERNAME 换成你的 GitHub 用户名
-#    用户主页仓库：https://github.com/YOUR_USERNAME/YOUR_USERNAME.github.io.git
-#    独立仓库：    https://github.com/YOUR_USERNAME/my-blog.git
-git remote add origin https://github.com/YOUR_USERNAME/YOUR_USERNAME.github.io.git
+# 3. 关联远程仓库（已使用你的 GitHub 用户名 Chiaquan）
+#    用户主页仓库：https://github.com/Chiaquan/Chiaquan.github.io.git
+#    独立仓库：    https://github.com/Chiaquan/my-blog.git
+git remote add origin https://github.com/Chiaquan/Chiaquan.github.io.git
 
 # 4. 确认主分支名并推送
 git branch -M main
@@ -159,7 +159,7 @@ git push -u origin main
 
 ```bash
 gh auth login
-gh repo create YOUR_USERNAME.github.io --public --source=. --remote=origin --push
+gh repo create Chiaquan.github.io --public --source=. --remote=origin --push
 ```
 
 ## GitHub Pages 部署
@@ -169,9 +169,9 @@ gh repo create YOUR_USERNAME.github.io --public --source=. --remote=origin --pus
 1. 打开 GitHub 仓库页面
 2. `Settings` → `Pages`
 3. `Build and deployment` 的 `Source` 选择 `GitHub Actions`
-4. 推送 `main` 后 Actions 会自动构建并发布，地址为 `https://YOUR_USERNAME.github.io`
+4. 推送 `main` 后 Actions 会自动构建并发布，地址为 `https://Chiaquan.github.io`
 
-注意：如果使用独立仓库（非 `<用户名>.github.io`），站点地址为 `https://YOUR_USERNAME.github.io/<仓库名>/`，需要同步修改 `astro.config.mjs` 的 `site` 和 `src/consts.ts` 的 `SITE_URL`。
+注意：如果使用独立仓库（非 `<用户名>.github.io`），站点地址为 `https://Chiaquan.github.io/<仓库名>/`，需要同步修改 `astro.config.mjs` 的 `site` 和 `src/consts.ts` 的 `SITE_URL`。
 
 ## 日常写作流程
 

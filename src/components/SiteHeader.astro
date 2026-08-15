@@ -53,13 +53,3 @@ const pathname = Astro.url.pathname;
     </button>
   </div>
 </header>
-
-<script>
-  const button = document.getElementById('theme-toggle');
-  const root = document.documentElement;
-  button?.addEventListener('click', () => {
-    const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
-    root.dataset.theme = next;
-    localStorage.setItem('theme', next);
-  });
-</script>
