@@ -74,6 +74,21 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? SITE_URL).href;
   const progress = document.getElementById('reading-progress');
   const topButton = document.getElementById('back-to-top');
 
+  const applyTheme = () => {
+    try {
+      const saved = localStorage.getItem('theme');
+      root.dataset.theme = saved || 'dark';
+    } catch {
+      root.dataset.theme = 'dark';
+    }
+    root.classList.add('js');
+  };
+  applyTheme();
+  if (!window.__dshThemeInitBound) {
+    window.__dshThemeInitBound = true;
+    document.addEventListener('astro:page-load', applyTheme);
+  }
+
   const updateScrollUI = () => {
     const y = window.scrollY;
     header?.classList.toggle('scrolled', y > 10);
@@ -88,13 +103,16 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? SITE_URL).href;
   window.addEventListener('resize', updateScrollUI, { passive: true });
   updateScrollUI();
 
-  document.addEventListener('click', (event) => {
-    const button = event.target.closest('#theme-toggle');
-    if (!button) return;
-    const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
-    root.dataset.theme = next;
-    localStorage.setItem('theme', next);
-  });
+  if (!window.__dshThemeToggleBound) {
+    window.__dshThemeToggleBound = true;
+    document.addEventListener('click', (event) => {
+      const button = event.target.closest('#theme-toggle');
+      if (!button) return;
+      const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+      root.dataset.theme = next;
+      localStorage.setItem('theme', next);
+    });
+  }
 
   topButton?.addEventListener('click', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
