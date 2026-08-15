@@ -1,3 +1,11 @@
+@font-face {
+  font-family: 'Qirfahuja';
+  src: url('/fonts/Qirfahuja.otf') format('opentype');
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+}
+
 :root {
   --bg: #fbfdff;
   --bg-soft: #eef6fd;
@@ -211,26 +219,10 @@ img {
   white-space: nowrap;
 }
 
-.brand-mark {
-  position: relative;
-  display: grid;
-  place-items: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
-  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
-  color: #fff;
-  font-size: 1.15rem;
-  box-shadow: 0 4px 12px color-mix(in srgb, var(--accent) 35%, transparent), inset 0 1px 0 rgb(255 255 255 / 0.35);
-  transition: transform 0.25s ease;
-}
-
 .brand-name {
-  font-size: 1.4rem;
-}
-
-.brand:hover .brand-mark {
-  transform: rotate(-6deg) scale(1.05);
+  font-family: 'Qirfahuja', var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 600;
 }
 
 .brand:hover {
@@ -427,6 +419,7 @@ html[data-theme='dark'] .theme-icon-moon {
 
 .hero-title {
   margin: 0;
+  font-family: 'Qirfahuja', var(--font-display);
   font-size: clamp(3.6rem, 9.5vw, 8.8rem);
   font-weight: 900;
   line-height: 0.98;
