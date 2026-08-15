@@ -145,10 +145,10 @@ git init -b main
 git add .
 git commit -m "init: Astro personal blog"
 
-# 3. 关联远程仓库（已使用你的 GitHub 账号 ChiaquanLin）
-#    用户主页仓库：https://github.com/ChiaquanLin/Chiaquan.github.io.git
+# 3. 关联远程仓库（用户站点仓库名必须与账号一致：ChiaquanLin.github.io）
+#    用户主页仓库：https://github.com/ChiaquanLin/ChiaquanLin.github.io.git
 #    独立仓库：    https://github.com/ChiaquanLin/my-blog.git
-git remote add origin https://github.com/ChiaquanLin/Chiaquan.github.io.git
+git remote add origin https://github.com/ChiaquanLin/ChiaquanLin.github.io.git
 
 # 4. 确认主分支名并推送
 git branch -M main
@@ -159,7 +159,7 @@ git push -u origin main
 
 ```bash
 gh auth login
-gh repo create Chiaquan.github.io --public --source=. --remote=origin --push
+gh repo create ChiaquanLin.github.io --public --source=. --remote=origin --push
 ```
 
 ## GitHub Pages 部署
