@@ -1,0 +1,72 @@
+---
+import { getPublishedPosts, getTags, getCategories } from '../lib/posts';
+
+const posts = await getPublishedPosts();
+const tags = await getTags();
+const categories = await getCategories();
+
+const skills = [
+  { name: 'TypeScript / 前端工程', level: 92 },
+  { name: 'Astro / 静态站点', level: 88 },
+  { name: 'Node.js / 全栈开发', level: 80 },
+  { name: 'UI 设计与微动效', level: 76 },
+];
+
+const experiences = [
+  { period: '2023 - 至今', title: '某某科技 · 前端工程师' },
+  { period: '2020 - 2023', title: '某某公司 · 全栈工程师' },
+  { period: '2016 - 2020', title: '某某大学 · 计算机科学与技术' },
+];
+---
+
+<aside class="resume-card" aria-label="个人简历">
+  <div class="resume-head">
+    <div class="resume-avatar" aria-hidden="true">名</div>
+    <div class="resume-id">
+      <h2 class="resume-name">你的名字</h2>
+      <p class="resume-role">全栈工程师 · 独立开发者</p>
+    </div>
+  </div>
+
+  <ul class="resume-contact">
+    <li><span>位置</span>中国 · 远程</li>
+    <li><span>邮箱</span>you@example.com</li>
+    <li><span>GitHub</span>github.com/yourname</li>
+  </ul>
+
+  <section class="resume-section">
+    <h3 class="resume-section-title">技能</h3>
+    <div class="skill-list">
+      {
+        skills.map((skill) => (
+          <div class="skill-item">
+            <span>{skill.name}</span>
+            <div class="skill-bar" aria-hidden="true">
+              <i class="skill-fill" style={`width:${skill.level}%`}></i>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="resume-section">
+    <h3 class="resume-section-title">经历</h3>
+    <div class="resume-timeline">
+      {
+        experiences.map((item) => (
+          <div class="timeline-item">
+            <time>{item.period}</time>
+            <span>{item.title}</span>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <div class="resume-stats">
+    <div><strong>{posts.length}</strong><span>文章</span></div>
+    <div><strong>{tags.length}</strong><span>标签</span></div>
+    <div><strong>{categories.length}</strong><span>分类</span></div>
+  </div>
+</aside>

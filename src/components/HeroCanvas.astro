@@ -2,50 +2,36 @@
 interface Props {
   title: string;
   description: string;
-  postCount: number;
-  tagCount: number;
-  categoryCount: number;
 }
 
-const { title, description, postCount, tagCount, categoryCount } = Astro.props;
+const { title, description } = Astro.props;
 ---
 
 <section class="hero" id="hero" aria-label="博客简介">
   <canvas id="hero-canvas" aria-hidden="true"></canvas>
   <div class="hero-vignette" aria-hidden="true"></div>
   <div class="hero-frame" aria-hidden="true"></div>
-  <div class="hero-content" id="hero-content">
-    <p class="eyebrow">Personal Blog</p>
-    <h1 class="hero-title">{title}</h1>
-    <p class="hero-role" aria-label="博客主题">记录 <span id="hero-role">技术</span><span class="role-caret" aria-hidden="true"></span></p>
-    <p class="hero-description">{description}</p>
-    <div class="hero-actions">
-      <a class="btn btn-primary" href="/blog">浏览文章</a>
-      <a class="btn btn-ghost" href="/about">关于我</a>
+  <div class="hero-layout" id="hero-layout">
+    <div class="hero-copy">
+      <p class="eyebrow">Personal Blog</p>
+      <h1 class="hero-title">{title}</h1>
+      <p class="hero-role" aria-label="博客主题">记录 <span id="hero-role">技术</span><span class="role-caret" aria-hidden="true"></span></p>
+      <p class="hero-description">{description}</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="/blog">浏览文章</a>
+        <a class="btn btn-ghost" href="/about">关于我</a>
+      </div>
     </div>
-    <dl class="hero-stats">
-      <div>
-        <dt>文章</dt>
-        <dd>{postCount}</dd>
-      </div>
-      <div>
-        <dt>标签</dt>
-        <dd>{tagCount}</dd>
-      </div>
-      <div>
-        <dt>分类</dt>
-        <dd>{categoryCount}</dd>
-      </div>
-    </dl>
+    <slot />
   </div>
-  <a class="hero-scroll" href="#featured" aria-label="向下浏览"></a>
+  <a class="hero-scroll" href="#posts" aria-label="向下浏览"></a>
 </section>
 
 <script>
   (() => {
     const canvas = document.getElementById('hero-canvas');
     const hero = document.getElementById('hero');
-    const content = document.getElementById('hero-content');
+    const layout = document.getElementById('hero-layout');
     const roleEl = document.getElementById('hero-role');
     if (!canvas || !hero) return;
 
@@ -53,7 +39,7 @@ const { title, description, postCount, tagCount, categoryCount } = Astro.props;
     if (!ctx) return;
 
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const palette = { accent: '#0e7c74', accent2: '#b45309' };
+    const palette = { accent: '#0f7d72', accent2: '#c47a12' };
     let width = 0;
     let height = 0;
     let particles = [];
@@ -111,7 +97,7 @@ const { title, description, postCount, tagCount, categoryCount } = Astro.props;
         if (p.y < 0 || p.y > height) p.vy *= -1;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = toRgba(p.warm ? palette.accent2 : palette.accent, 0.6);
+        ctx.fillStyle = toRgba(p.warm ? palette.accent2 : palette.accent, 0.55);
         ctx.fill();
       }
 
@@ -126,7 +112,7 @@ const { title, description, postCount, tagCount, categoryCount } = Astro.props;
             ctx.beginPath();
             ctx.moveTo(a.x, a.y);
             ctx.lineTo(b.x, b.y);
-            ctx.strokeStyle = toRgba(palette.accent, (1 - dist / linkDist) * 0.16);
+            ctx.strokeStyle = toRgba(palette.accent, (1 - dist / linkDist) * 0.14);
             ctx.lineWidth = 1;
             ctx.stroke();
           }
@@ -136,7 +122,7 @@ const { title, description, postCount, tagCount, categoryCount } = Astro.props;
           ctx.beginPath();
           ctx.moveTo(a.x, a.y);
           ctx.lineTo(mouse.x, mouse.y);
-          ctx.strokeStyle = toRgba(palette.accent2, (1 - dm / 180) * 0.28);
+          ctx.strokeStyle = toRgba(palette.accent2, (1 - dm / 180) * 0.26);
           ctx.lineWidth = 1;
           ctx.stroke();
         }
@@ -154,17 +140,17 @@ const { title, description, postCount, tagCount, categoryCount } = Astro.props;
       const rect = hero.getBoundingClientRect();
       mouse.x = event.clientX - rect.left;
       mouse.y = event.clientY - rect.top;
-      if (content && !reducedMotion) {
-        const cx = (event.clientX / window.innerWidth - 0.5) * 14;
-        const cy = (event.clientY / window.innerHeight - 0.5) * 10;
-        content.style.transform = `translate(${cx.toFixed(1)}px, ${cy.toFixed(1)}px)`;
+      if (layout && !reducedMotion) {
+        const cx = (event.clientX / window.innerWidth - 0.5) * 12;
+        const cy = (event.clientY / window.innerHeight - 0.5) * 8;
+        layout.style.transform = `translate(${cx.toFixed(1)}px, ${cy.toFixed(1)}px)`;
       }
     };
 
     const clearPointer = () => {
       mouse.x = -9999;
       mouse.y = -9999;
-      if (content) content.style.transform = '';
+      if (layout) layout.style.transform = '';
     };
 
     readPalette();

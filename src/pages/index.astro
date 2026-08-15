@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import HeroCanvas from '../components/HeroCanvas.astro';
-import Marquee from '../components/Marquee.astro';
+import ResumeCard from '../components/ResumeCard.astro';
 import FeaturedPost from '../components/FeaturedPost.astro';
 import PostCard from '../components/PostCard.astro';
 import { getPublishedPosts, getTags, getCategories } from '../lib/posts';
@@ -14,67 +14,65 @@ const [featured, ...latest] = posts;
 ---
 
 <BaseLayout>
-  <HeroCanvas
-    title={SITE_TITLE}
-    description={SITE_DESCRIPTION}
-    postCount={posts.length}
-    tagCount={tags.length}
-    categoryCount={categories.length}
-  />
-  <Marquee />
+  <HeroCanvas title={SITE_TITLE} description={SITE_DESCRIPTION}>
+    <ResumeCard />
+  </HeroCanvas>
 
-  <section class="section" id="featured" data-reveal>
-    <div class="section-heading">
-      <h2 class="section-title">精选文章</h2>
-      <a href="/blog">查看全部</a>
-    </div>
-    {featured && <FeaturedPost post={featured} />}
-  </section>
+  <div class="home-sections">
+    <section class="section" id="posts" data-reveal>
+      <div class="section-heading">
+        <h2 class="section-title">精选文章</h2>
+        <a href="/blog">查看全部</a>
+      </div>
+      {featured && <FeaturedPost post={featured} />}
+    </section>
 
-  {
-    latest.length > 0 && (
-      <section class="section" data-reveal>
-        <div class="section-heading">
-          <h2 class="section-title">最新文章</h2>
-          <a href="/blog">查看全部</a>
+    {
+      latest.length > 0 && (
+        <section class="section" data-reveal>
+          <div class="section-heading">
+            <h2 class="section-title">最新文章</h2>
+            <a href="/blog">查看全部</a>
+          </div>
+          <div class="post-grid">
+            {latest.map((post) => <PostCard post={post} />)}
+          </div>
+        </section>
+      )
+    }
+
+    <section class="section" data-reveal>
+      <div class="section-heading">
+        <h2 class="section-title">主题</h2>
+        <a href="/tags">标签 · 分类</a>
+      </div>
+      <div class="home-topics">
+        <div>
+          <p class="resume-section-title">标签</p>
+          <div class="tag-cloud">
+            {
+              tags.map((tag) => (
+                <a class="tag-chip tag-link" href={`/tags/${encodeURIComponent(tag.name)}`}>
+                  #{tag.name}
+                </a>
+              ))
+            }
+          </div>
         </div>
-        <div class="post-grid">
-          {latest.map((post) => <PostCard post={post} />)}
+        <div>
+          <p class="resume-section-title">分类</p>
+          <div class="taxonomy-grid">
+            {
+              categories.map((category) => (
+                <a class="taxonomy-card" href={`/categories/${encodeURIComponent(category.name)}`}>
+                  <span>{category.name}</span>
+                  <span class="taxonomy-count">{category.count}</span>
+                </a>
+              ))
+            }
+          </div>
         </div>
-      </section>
-    )
-  }
-
-  <section class="section" data-reveal>
-    <div class="section-heading">
-      <h2 class="section-title">标签</h2>
-      <a href="/tags">全部标签</a>
-    </div>
-    <div class="tag-cloud">
-      {
-        tags.map((tag) => (
-          <a class="tag-chip tag-link" href={`/tags/${encodeURIComponent(tag.name)}`}>
-            #{tag.name}
-          </a>
-        ))
-      }
-    </div>
-  </section>
-
-  <section class="section" data-reveal>
-    <div class="section-heading">
-      <h2 class="section-title">分类</h2>
-      <a href="/categories">全部分类</a>
-    </div>
-    <div class="taxonomy-grid">
-      {
-        categories.map((category) => (
-          <a class="taxonomy-card" href={`/categories/${encodeURIComponent(category.name)}`}>
-            <span>{category.name}</span>
-            <span class="taxonomy-count">{category.count}</span>
-          </a>
-        ))
-      }
-    </div>
-  </section>
+      </div>
+    </section>
+  </div>
 </BaseLayout>
