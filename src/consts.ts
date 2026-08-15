@@ -1,6 +1,6 @@
-export const SITE_TITLE = '个人博客';
-export const SITE_DESCRIPTION = '记录技术、设计与生活的个人博客';
-export const SITE_AUTHOR = '你的名字';
+export const SITE_TITLE = "Chiaquan's Blog";
+export const SITE_DESCRIPTION = 'Chiaquan 的技术、设计与生活记录';
+export const SITE_AUTHOR = 'Chiaquan';
 export const SITE_URL = 'https://chiaquan.github.io';
 
 // 首页整屏背景图：把图片放到 public/ 目录后修改此路径即可，推荐 2560x1440 以上。

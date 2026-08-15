@@ -1,4 +1,4 @@
-# 个人博客
+# Chiaquan's Blog
 
 基于 Astro 5 的静态个人博客，本地用 Git 管理，自动部署到 GitHub Pages。支持时间轴文章页、详情页、分类、标签、关于/简历合并页、RSS、Sitemap 与基础 SEO，并内置响应式布局、深浅色模式、代码高亮和轻量微动效。
 
@@ -70,9 +70,9 @@ pnpm preview
 编辑 `src/consts.ts`：
 
 ```ts
-export const SITE_TITLE = '个人博客';
-export const SITE_DESCRIPTION = '记录技术、设计与生活的个人博客';
-export const SITE_AUTHOR = '你的名字';
+export const SITE_TITLE = "Chiaquan's Blog";
+export const SITE_DESCRIPTION = 'Chiaquan 的技术、设计与生活记录';
+export const SITE_AUTHOR = 'Chiaquan';
 export const SITE_URL = 'https://Chiaquan.github.io';
 ```
 
