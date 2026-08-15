@@ -362,7 +362,7 @@ html[data-theme='dark'] .theme-icon-moon {
   inset: 0;
   z-index: -2;
   overflow: hidden;
-  background: #000a25;
+  background: transparent;
 }
 
 .hero-image {
