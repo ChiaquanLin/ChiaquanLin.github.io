@@ -27,7 +27,7 @@ const hasExtra = Astro.slots.has('default');
   }
   <div class="hero-layout" id="hero-layout">
     <div class="hero-copy">
-      <h1 class="hero-title">{' ' + title}</h1>
+      <h1 class="hero-title">{'\u00A0' + title}</h1>
     </div>
     <slot />
   </div>

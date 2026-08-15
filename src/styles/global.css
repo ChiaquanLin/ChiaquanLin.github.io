@@ -419,22 +419,36 @@ html[data-theme='dark'] .theme-icon-moon {
 
 .hero-title {
   margin: 0;
+  padding-left: 0.06em;
   font-family: 'Qirfahuja', var(--font-display);
-  font-size: clamp(4.6rem, 12.5vw, 11rem);
+  font-size: clamp(5rem, 13.5vw, 12rem);
   font-weight: 1000;
-  line-height: 0.96;
+  line-height: 0.95;
   letter-spacing: 0;
   color: #ffffff;
-  filter: drop-shadow(0 0.14em 0.45em rgb(0 10 37 / 0.52)) drop-shadow(0 0 1.8em rgb(143 199 232 / 0.24));
+  filter: drop-shadow(0 0.18em 0.55em rgb(0 10 37 / 0.6)) drop-shadow(-0.08em 0 1.8em rgb(90 167 216 / 0.5)) drop-shadow(0.16em 0.05em 2.2em rgb(229 72 77 / 0.38));
 }
 
 @supports ((-webkit-background-clip: text) or (background-clip: text)) {
   .hero-title {
-    background: linear-gradient(100deg, #ffffff 4%, #d9edff 36%, #b5dcff 60%, #ffd9e0 82%, #ff9db4 100%);
+    background: linear-gradient(102deg, #ffffff 0%, #e2f3ff 16%, #a9d8f5 34%, #5aa7d8 52%, #2e78b0 66%, #e5484d 86%, #ff9db4 100%);
+    background-size: 160% 100%;
+    background-position: 0% 0;
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
     color: transparent;
+    -webkit-text-stroke: 0.02em rgb(255 255 255 / 0.55);
+    animation: hero-gradient-shift 7s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes hero-gradient-shift {
+  from {
+    background-position: 0% 0;
+  }
+  to {
+    background-position: 100% 0;
   }
 }
 
@@ -1704,7 +1718,7 @@ html.js [data-reveal].is-visible {
   }
 
   .hero-title {
-    font-size: clamp(3.7rem, 16vw, 5.8rem);
+    font-size: clamp(4.4rem, 17vw, 6.6rem);
   }
 
   .hero-frame {
