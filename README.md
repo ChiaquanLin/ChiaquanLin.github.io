@@ -8,6 +8,7 @@
 - Markdown 内容集合：`src/content/blog/`
 - @astrojs/rss、@astrojs/sitemap：RSS 与站点地图
 - Shiki：代码高亮（跟随深浅色主题）
+- remark-math + rehype-katex：Markdown 数学公式渲染（KaTeX，跟随深浅色主题）
 - GitHub Actions：推送 `main` 后自动构建并发布 Pages
 
 ## 本地环境准备
@@ -133,6 +134,24 @@ draft: false
 - `tags`、`categories`：数组，生成对应标签页/分类页
 - `draft: true`：本地可见但不会发布到线上
 
+### 数学公式
+
+正文支持 KaTeX 语法，行内公式用单个 `$` 包裹，块级公式必须把 `$$` 单独写成一行：
+
+```md
+行内公式：$V(S_t) = E[r_t + \gamma r_{t+1}]$
+
+块级公式：
+
+$$
+\delta_t = r_t + \gamma V(S_{t+1}) - V(S_t)
+$$
+```
+
+注意：`$$\delta_t = ...$$` 这种把内容写在 `$$` 同一行的写法会被当成行内公式，`\sum`、`\underbrace` 等的上下限排版会退化成行内样式，请务必让 `$$` 独占一行。样式来自 `src/layouts/BaseLayout.astro` 引入的 `katex/dist/katex.min.css`，在 `src/styles/global.css` 的 `Math formulas (KaTeX)` 段落中调整。
+
+公式渲染失败时 KaTeX 会把原始源码标红输出，不会中断构建。
+
 ## Git 初始化与关联 GitHub
 
 如果你尚未创建仓库，先创建 GitHub 仓库。推荐命名为 `<你的用户名>.github.io`；也可以使用任意名称的独立仓库并通过 Actions 部署。
@@ -194,4 +213,6 @@ git push
 
 - `pnpm install` 提示忽略构建脚本：本项目已在 `pnpm-workspace.yaml` 的 `allowBuilds` 中批准 `esbuild` 与 `sharp`，正常安装不会出现该提示。
 - 部署后样式或链接不对：确认 `astro.config.mjs` 的 `site` 与仓库实际地址一致。
+- 公式显示成 `$...$` 原文：说明构建时没有启用 KaTeX，确认 `astro.config.mjs` 的 `markdown.remarkPlugins` / `rehypePlugins` 中已包含 `remark-math` 与 `rehype-katex`，且 `katex` 依赖已安装。
+- 块级公式没有居中、上下限被压缩：把 `$$` 写成独占一行的围栏形式（见「数学公式」一节）。
 - 不想发布某篇文章：在 frontmatter 中设置 `draft: true`。

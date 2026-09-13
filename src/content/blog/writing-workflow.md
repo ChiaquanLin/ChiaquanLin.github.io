@@ -2,7 +2,7 @@
 title: 个人博客项目结构与使用指南
 description: 一篇看懂这个博客：项目目录、页面组成、写作方式、Git 提交与 GitHub Pages 自动部署。
 pubDate: 2026-08-15
-updatedDate: 2026-08-15
+updatedDate: 2026-09-13
 tags: [Astro, Git, GitHub, 部署]
 categories: [技术]
 draft: false
@@ -89,6 +89,22 @@ draft: false
 - `title`、`description`、`pubDate`：必填。
 - `tags`、`categories`：数组，用于生成标签页和分类页。
 - `draft: true`：本地可见，但不会发布到线上。
+
+## 数学公式
+
+正文支持 KaTeX 语法。行内公式用单个 `$` 包裹，块级公式要把 `$$` 单独写成一行：
+
+```md
+行内公式：$V(S_t) = E[r_t + \gamma r_{t+1}]$
+
+块级公式：
+
+$$
+\delta_t = r_t + \gamma V(S_{t+1}) - V(S_t)
+$$
+```
+
+需要留意的是，`$$\delta_t = ...$$` 这种把内容写在 `$$` 同一行的写法会被当成行内公式解析，`\sum`、`\underbrace` 等的上下限排版会退化成行内样式，所以块级公式一定让 `$$` 独占一行。渲染依赖 `remark-math` 与 `rehype-katex`（在 `astro.config.mjs` 中配置），样式由 `BaseLayout.astro` 引入的 `katex.min.css` 提供。若某个公式语法写错，页面会把源码标红提示，不会导致整站构建失败。
 
 ## Git 提交方式
 
