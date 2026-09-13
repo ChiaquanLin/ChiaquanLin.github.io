@@ -29,7 +29,9 @@ $V(s_{t+1}) = E[r_{t+1} + γ * r_{t+2} + γ^2 * r_{t+3} + ... + γ^{end-t-1} * r
 
 ### 时序差分误差 Temporal-difference Error [TD误差]
 
-$$\delta_t = \underbrace{r_t}_{\text{实际采样}} + \gamma \times \underbrace{V(S_{t+1})}_{\text{预测}} - \underbrace{V(S_t)}_{\text{预测}}$$
+$$
+\delta_t = \underbrace{r_t}_{\text{实际采样}} + \gamma \times \underbrace{V(S_{t+1})}_{\text{预测}} - \underbrace{V(S_t)}_{\text{预测}}
+$$
 
 $V(S_t)$ 为智能体当前对状态 $S_t$ 价值的主观猜测（由神经网络或Q表计算得出）。它完全是模型自己估算出来的，不是客观现实。
 
@@ -44,26 +46,40 @@ TD 学习的本质，就是用这个包含“部分真实、部分估计”的 T
 
 ### 广义优势估计 Generalized Advantage Estimation (GAE)
 
-$$\hat{A} = \delta_t + \gamma * \lambda * \delta_{t+1} + (\gamma * \lambda)^2 * \delta_{t+2} + ... $$
+$$
+\hat{A} = \delta_t + \gamma * \lambda * \delta_{t+1} + (\gamma * \lambda)^2 * \delta_{t+2} + ...
+$$
 
 其中，$\gamma$ 为折扣因子， $\lambda$ 为 GAE 权重参数。
 
 $k$ 步的总回报（k=2）:
-$$R_t^{(2)} = r_t + \gamma r_{t+1} + \gamma^2 V(S_{t+2})$$
+$$
+R_t^{(2)} = r_t + \gamma r_{t+1} + \gamma^2 V(S_{t+2})
+$$
 
 $k$ 步的优势函数（k=2）：
-$$A_t^{(2)} = \underbrace{r_t + \gamma r_{t+1} + \gamma^2 V(S_{t+2})}_{\text{2 步实际回报}} - \underbrace{V(S_t)}_{\text{初始预期}}$$
+$$
+A_t^{(2)} = \underbrace{r_t + \gamma r_{t+1} + \gamma^2 V(S_{t+2})}_{\text{2 步实际回报}} - \underbrace{V(S_t)}_{\text{初始预期}}
+$$
 
-$$A_t^{(2)} = r_t + \mathbf{\gamma V(S_{t+1})} - V(S_t) + \gamma r_{t+1} + \gamma^2 V(S_{t+2}) - \mathbf{\gamma V(S_{t+1})}$$
+$$
+A_t^{(2)} = r_t + \mathbf{\gamma V(S_{t+1})} - V(S_t) + \gamma r_{t+1} + \gamma^2 V(S_{t+2}) - \mathbf{\gamma V(S_{t+1})}
+$$
 
-$$A_t^{(2)} = \delta_t^V + \gamma \delta_{t+1}^V$$
+$$
+A_t^{(2)} = \delta_t^V + \gamma \delta_{t+1}^V
+$$
 
-$$A_t^{(k)} = \sum_{l=0}^{k-1} \gamma^l \delta_{t+l}^V = \delta_t^V + \gamma \delta_{t+1}^V + \gamma^2 \delta_{t+2}^V + \dots + \gamma^{k-1} \delta_{t+k-1}^V$$
+$$
+A_t^{(k)} = \sum_{l=0}^{k-1} \gamma^l \delta_{t+l}^V = \delta_t^V + \gamma \delta_{t+1}^V + \gamma^2 \delta_{t+2}^V + \dots + \gamma^{k-1} \delta_{t+k-1}^V
+$$
 
 ### 概率比 Probability Ratios
 
 为了衡量新旧策略的差距，PPO 引入了概率比 $r_t(\theta)$：
-$$r_t(\theta) = \frac{\pi_\theta(a_t\vert{}s_t)}{\pi_{\theta_{old}}(a_t\vert{}s_t)}$$
+$$
+r_t(\theta) = \frac{\pi_\theta(a_t\vert{}s_t)}{\pi_{\theta_{old}}(a_t\vert{}s_t)}
+$$
 
 - 当 $r_t = 1$：新旧策略对这个动作的概率完全一样。
 - 当 $r_t > 1$：说明这个动作在新策略中变得更常见了（新策略更倾向于选它）。
