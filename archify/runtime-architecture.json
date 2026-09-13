@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "个人博客运行时架构",
+    "output": "personal-blog-runtime-architecture.html",
+    "quality_profile": "showcase",
+    "viewBox": [1500, 720],
+    "repository": {
+      "url": "https://github.com/ChiaquanLin/ChiaquanLin.github.io",
+      "revision": "769cab9d265d5ac0b194ee501e3fef26d58da5f4"
+    }
+  },
+  "components": [
+    { "id": "author", "type": "external", "label": "作者 / Git 客户端", "sublabel": "git push · main", "pos": [60, 140], "size": [150, 64], "sources": [{ "path": "package.json", "line": 14, "label": "new:post 脚本" }, { "path": "src/content/blog/writing-workflow.md", "line": 93, "label": "Git 提交方式" }] },
+    { "id": "content", "type": "database", "label": "Markdown 内容", "sublabel": "src/content/blog", "pos": [60, 280], "size": [150, 64], "sources": [{ "path": "src/content.config.ts", "line": 4, "label": "glob 加载文章" }, { "path": "src/content/blog/writing-workflow.md", "line": 1, "label": "frontmatter 元数据" }] },
+    { "id": "assets", "type": "database", "label": "静态资源", "sublabel": "public/ · hero.jpg · Qirfahuja", "pos": [60, 420], "size": [150, 64], "sources": [{ "path": "src/consts.ts", "line": 8, "label": "SITE_HERO_IMAGE" }, { "path": "public/fonts/Qirfahuja.otf", "label": "自定义字体" }] },
+    { "id": "repo", "type": "cloud", "label": "GitHub 仓库", "sublabel": "ChiaquanLin.github.io", "tag": "main", "pos": [390, 140], "size": [160, 64], "sources": [{ "path": ".github/workflows/deploy.yml", "line": 3, "end_line": 5, "label": "push 到 main 触发" }] },
+    { "id": "ci", "type": "cloud", "label": "GitHub Actions", "sublabel": "pnpm install · astro build", "tag": "deploy.yml", "pos": [650, 140], "size": [160, 64], "sources": [{ "path": ".github/workflows/deploy.yml", "line": 17, "end_line": 39, "label": "构建作业" }, { "path": ".github/workflows/deploy.yml", "line": 41, "end_line": 47, "label": "上传 dist 产物" }] },
+    { "id": "pages", "type": "cloud", "label": "GitHub Pages", "sublabel": "chiaquanlin.github.io", "pos": [910, 140], "size": [160, 64], "sources": [{ "path": "astro.config.mjs", "line": 6, "label": "site 地址" }, { "path": ".github/workflows/deploy.yml", "line": 56, "end_line": 58, "label": "deploy-pages" }] },
+    { "id": "feeds", "type": "cloud", "label": "RSS / Sitemap", "sublabel": "rss.xml · sitemap", "pos": [910, 300], "size": [160, 64], "sources": [{ "path": "src/pages/rss.xml.js", "line": 11, "label": "RSS 输出" }, { "path": "astro.config.mjs", "line": 7, "label": "sitemap 集成" }] },
+    { "id": "browser", "type": "frontend", "label": "浏览器", "sublabel": "HTML / CSS / JS 静态页面", "pos": [1200, 140], "size": [170, 64], "sources": [{ "path": "src/layouts/BaseLayout.astro", "line": 54, "label": "ClientRouter" }, { "path": "src/pages/index.astro", "line": 14, "label": "首页画幅" }] },
+    { "id": "runtime", "type": "frontend", "label": "页面运行时", "sublabel": "View Transitions · 筛选 · 显现动画", "pos": [1200, 330], "size": [170, 64], "sources": [{ "path": "src/layouts/BaseLayout.astro", "line": 86, "end_line": 89, "label": "页面加载重放主题" }, { "path": "src/layouts/BaseLayout.astro", "line": 121, "end_line": 146, "label": "reveal 重扫" }, { "path": "src/pages/blog.astro", "line": 79, "label": "分类筛选" }] },
+    { "id": "theme", "type": "frontend", "label": "主题系统", "sublabel": "EVA 配色 · localStorage", "pos": [1200, 520], "size": [170, 64], "sources": [{ "path": "src/styles/global.css", "line": 9, "label": "浅色变量" }, { "path": "src/styles/global.css", "line": 33, "label": "深色变量" }, { "path": "src/layouts/BaseLayout.astro", "line": 106, "end_line": 113, "label": "主题切换持久化" }] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "本地创作", "wraps": ["author", "content", "assets"] },
+    { "kind": "region", "label": "GitHub 云端", "wraps": ["repo", "ci", "pages", "feeds"] },
+    { "kind": "region", "label": "浏览器运行时", "wraps": ["browser", "runtime", "theme"] }
+  ],
+  "connections": [
+    { "id": "author-repo", "from": "author", "to": "repo", "label": "git push", "variant": "emphasis" },
+    { "id": "content-ci", "from": "content", "to": "ci", "label": "glob 读取", "variant": "dashed", "labelAt": [400, 300] },
+    { "id": "assets-ci", "from": "assets", "to": "ci", "label": "public/ 复制", "variant": "dashed", "labelAt": [400, 436] },
+    { "id": "repo-ci", "from": "repo", "to": "ci", "label": "push: main 触发" },
+    { "id": "ci-pages", "from": "ci", "to": "pages", "label": "deploy-pages" },
+    { "id": "pages-feeds", "from": "pages", "to": "feeds", "label": "输出", "variant": "dashed", "labelAt": [990, 218] },
+    { "id": "pages-browser", "from": "pages", "to": "browser", "label": "HTTPS", "variant": "emphasis" },
+    { "id": "browser-runtime", "from": "browser", "to": "runtime", "label": "脚本执行", "labelAt": [1285, 218] },
+    { "id": "runtime-theme", "from": "runtime", "to": "theme", "label": "应用主题", "labelAt": [1285, 408] }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "内容管线", "items": ["src/content/blog 由 glob loader 读取并校验 frontmatter", "Astro 生成全部静态页面与 RSS / Sitemap", "public/ 中的 hero.jpg 与 Qirfahuja 字体原样发布"] },
+    { "dot": "emerald", "title": "构建与部署", "items": ["push 到 main 触发 GitHub Actions", "pnpm install --frozen-lockfile 后执行 astro build", "dist 上传为 Pages artifact，再由 deploy-pages 发布"] },
+    { "dot": "rose", "title": "浏览器运行时", "items": ["ClientRouter 提供跨页面过渡动画", "astro:page-load 重放主题并重扫 reveal 元素", "分类筛选与主题切换均为前端运行时行为"] }
+  ]
+}
