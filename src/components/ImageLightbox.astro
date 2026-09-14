@@ -51,7 +51,10 @@
     </button>
   </div>
 
-  <p class="il-hint" aria-hidden="true">滚轮缩放 · 拖拽移动 · 双击放大 · Esc 关闭</p>
+  <p class="il-hints" aria-hidden="true">
+    <span class="il-hint il-hint-pointer">滚轮缩放 · 拖拽移动 · 双击放大 · Esc 关闭</span>
+    <span class="il-hint il-hint-touch">双指缩放 · 拖拽移动 · 双击放大</span>
+  </p>
 </div>
 
 <style>
@@ -175,7 +178,7 @@
     background: var(--border);
   }
 
-  .il-hint {
+  .il-hints {
     position: absolute;
     left: 50%;
     bottom: clamp(16px, 2.6vh, 28px);
@@ -185,6 +188,21 @@
     white-space: nowrap;
     color: rgb(255 255 255 / 0.7);
     pointer-events: none;
+  }
+
+  .il-hint-touch {
+    display: none;
+  }
+
+  /* 触控设备上「滚轮 / Esc」没有意义，换成对应的手势说明 */
+  @media (pointer: coarse) {
+    .il-hint-pointer {
+      display: none;
+    }
+
+    .il-hint-touch {
+      display: inline;
+    }
   }
 
   /* 作用于 <html>，不在组件作用域内，需要 :global 才能生效 */
@@ -202,7 +220,7 @@
     }
 
     .image-lightbox.is-open .il-bar,
-    .image-lightbox.is-open .il-hint {
+    .image-lightbox.is-open .il-hints {
       animation: il-rise 240ms ease-out both;
     }
   }
@@ -236,7 +254,7 @@
   }
 
   @media (max-width: 760px) {
-    .il-hint {
+    .il-hints {
       font-size: 0.72rem;
     }
   }
@@ -363,7 +381,6 @@
     document.documentElement.classList.add('il-lock');
 
     view.open = true;
-    resetView();
     measure();
     resetView();
 
