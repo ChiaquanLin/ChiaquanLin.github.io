@@ -1455,6 +1455,25 @@ html[data-theme='dark'] .post-content pre.astro-code span {
   border-top: 1px solid var(--border);
 }
 
+/* Zoomable article images (interaction lives in components/ImageLightbox.astro) */
+.post-content img.is-zoomable {
+  border-radius: var(--radius);
+  cursor: zoom-in;
+  outline: 1px solid transparent;
+  outline-offset: 3px;
+  transition: outline-color 160ms ease, box-shadow 160ms ease;
+}
+
+.post-content img.is-zoomable:hover {
+  outline-color: color-mix(in srgb, var(--accent) 60%, transparent);
+  box-shadow: var(--shadow-md);
+}
+
+.post-content img.is-zoomable:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
 /* Math formulas (KaTeX) */
 .post-content .katex {
   font-size: 1.08em;

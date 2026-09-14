@@ -18,27 +18,28 @@ personal_blog/
 │   ├── hero.jpg               # 首页整屏背景图（可替换为 PNG/WebP）
 │   └── favicon.svg
 ├── src/
-│   ├── components/            # 页面组件
-│   │   ├── HeroCanvas.astro   # 首页画幅
-│   │   ├── SiteHeader.astro   # 顶部导航与主题切换
-│   │   ├── SiteFooter.astro   # 页脚
-│   │   ├── PostCard.astro     # 文章卡片
-│   │   └── ResumeCard.astro   # 简历卡片
+│   ├── components/             # 页面组件
+│   │   ├── HeroCanvas.astro    # 首页画幅
+│   │   ├── SiteHeader.astro    # 顶部导航与主题切换
+│   │   ├── SiteFooter.astro    # 页脚
+│   │   ├── PostCard.astro      # 文章卡片
+│   │   ├── ImageLightbox.astro # 文章图片点击放大查看器
+│   │   └── ResumeCard.astro    # 简历卡片
 │   ├── content/
-│   │   ├── blog/              # Markdown 文章目录
-│   │   └── config.ts          # 文章字段定义
+│   │   ├── blog/               # Markdown 文章目录
+│   │   └── config.ts           # 文章字段定义
 │   ├── layouts/
-│   │   └── BaseLayout.astro   # 全局布局、主题与页面切换
-│   ├── pages/                 # 路由页面
-│   │   ├── index.astro        # 首页
-│   │   ├── blog.astro         # 文章列表 + 时间线 + 分类筛选
-│   │   ├── blog/[slug].astro  # 文章详情
-│   │   ├── tags/              # 标签页
-│   │   ├── categories/        # 分类页
-│   │   ├── about.astro        # 关于/简历
-│   │   └── rss.xml.js         # RSS
+│   │   └── BaseLayout.astro    # 全局布局、主题与页面切换
+│   ├── pages/                  # 路由页面
+│   │   ├── index.astro         # 首页
+│   │   ├── blog.astro          # 文章列表 + 时间线 + 分类筛选
+│   │   ├── blog/[slug].astro   # 文章详情
+│   │   ├── tags/               # 标签页
+│   │   ├── categories/         # 分类页
+│   │   ├── about.astro         # 关于/简历
+│   │   └── rss.xml.js          # RSS
 │   └── styles/
-│       └── global.css         # 全部主题变量与样式
+│       └── global.css          # 全部主题变量与样式
 ├── scripts/
 │   ├── new-post.mjs           # 新建文章脚本
 │   └── generate-hero.mjs      # 生成默认首页图
@@ -105,6 +106,24 @@ $$
 ```
 
 需要留意的是，`$$\delta_t = ...$$` 这种把内容写在 `$$` 同一行的写法会被当成行内公式解析，`\sum`、`\underbrace` 等的上下限排版会退化成行内样式，所以块级公式一定让 `$$` 独占一行。渲染依赖 `remark-math` 与 `rehype-katex`（在 `astro.config.mjs` 中配置），样式由 `BaseLayout.astro` 引入的 `katex.min.css` 提供。若某个公式语法写错，页面会把源码标红提示，不会导致整站构建失败。
+
+## 图片与 SVG
+
+正文里的图片和 SVG 不需要任何额外标记，默认就可以点击放大：
+
+- 点击图片（或聚焦后按 `Enter`）打开全屏查看器
+- 缩放：滚轮 / 双指捏合 / 工具栏 `+` `-` / 键盘 `+` `-`，按 `0` 或「重置」回到适应视图
+- 平移：按住拖动，方向键微调，双击复位
+- 关闭：`Esc`、点遮罩或关闭按钮；关闭后焦点会回到原来那张图片
+
+查看器实现在 `src/components/ImageLightbox.astro`，由 `BaseLayout.astro` 全局挂载，因此每个页面都能用；鼠标悬停时的可点击提示样式在 `global.css` 的 `Zoomable article images` 段落。页面之间用 View Transitions 跳转时，查看器状态会自动重置，不会残留在新页面上。
+
+有两种图片不会参与放大：包在链接里的图片（保留原来的跳转行为），以及手动加上 `data-no-zoom` 的图片。
+
+```md
+[![截图](./shot.png)](./shot.png)   <!-- 链接内的图片，点击仍然跳转 -->
+![示意图](./plain.png)              <!-- 默认放大；如需关闭，给这个 img 加 data-no-zoom -->
+```
 
 ## Git 提交方式
 

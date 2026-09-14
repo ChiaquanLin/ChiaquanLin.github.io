@@ -1,6 +1,6 @@
 # Chiaquan's Blog
 
-基于 Astro 5 的静态个人博客，本地用 Git 管理，自动部署到 GitHub Pages。支持时间轴文章页、详情页、分类、标签、关于/简历合并页、RSS、Sitemap 与基础 SEO，并内置响应式布局、深浅色模式、代码高亮和轻量微动效。
+基于 Astro 5 的静态个人博客，本地用 Git 管理，自动部署到 GitHub Pages。支持时间轴文章页、详情页、分类、标签、关于/简历合并页、RSS、Sitemap 与基础 SEO，并内置响应式布局、深浅色模式、代码高亮、KaTeX 数学公式、文章图片点击放大查看和轻量微动效。
 
 ## 技术栈
 
@@ -133,6 +133,24 @@ draft: false
 - `title`、`description`、`pubDate`：必填
 - `tags`、`categories`：数组，生成对应标签页/分类页
 - `draft: true`：本地可见但不会发布到线上
+
+### 图片与 SVG 查看
+
+文章正文里的图片和 SVG 默认可以点击放大，无需额外标记：
+
+- 点击图片（或聚焦后按 `Enter`）打开全屏查看器
+- 缩放：滚轮 / 双指捏合 / 工具栏 `+` `-` / 键盘 `+` `-`；`0` 或「重置」回到适应视图
+- 平移：按住拖动，方向键微调，双击复位
+- 关闭：`Esc`、遮罩或关闭按钮，关闭后焦点回到原图
+
+实现见 `src/components/ImageLightbox.astro`，在 `src/layouts/BaseLayout.astro` 中全局挂载，因此所有页面可用，且经 View Transitions 跳转后会自动重置。鼠标悬停的可点击提示样式在 `src/styles/global.css` 的 `Zoomable article images` 段落。
+
+两种图片不参与放大：包在 `<a>` 里的图片（保留原跳转行为），以及手动加上 `data-no-zoom` 的图片。
+
+```md
+[![截图](./shot.png)](./shot.png)    <!-- 链接内的图片：仍然走链接 -->
+![不放大](./plain.png)               <!-- 需要时给这个 img 加 data-no-zoom -->
+```
 
 ### 数学公式
 

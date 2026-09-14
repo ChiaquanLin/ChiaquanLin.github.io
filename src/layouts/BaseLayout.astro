@@ -4,6 +4,7 @@ import 'katex/dist/katex.min.css';
 import { ClientRouter } from 'astro:transitions';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
+import ImageLightbox from '../components/ImageLightbox.astro';
 import { SITE_TITLE, SITE_DESCRIPTION, SITE_URL } from '../consts';
 
 interface Props {
@@ -66,6 +67,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? SITE_URL).href;
         <path d="M12 19V5M5 12l7-7 7 7" />
       </svg>
     </button>
+    <ImageLightbox />
   </body>
 </html>
 
