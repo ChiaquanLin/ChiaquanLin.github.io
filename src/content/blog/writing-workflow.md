@@ -23,6 +23,7 @@ personal_blog/
 │   │   ├── SiteHeader.astro    # 顶部导航与主题切换
 │   │   ├── SiteFooter.astro    # 页脚
 │   │   ├── PostCard.astro      # 文章卡片
+│   │   ├── PostToc.astro       # 文章右侧目录
 │   │   ├── ImageLightbox.astro # 文章图片点击放大查看器
 │   │   └── ResumeCard.astro    # 简历卡片
 │   ├── content/
@@ -124,6 +125,17 @@ $$
 [![截图](./shot.png)](./shot.png)   <!-- 链接内的图片，点击仍然跳转 -->
 ![示意图](./plain.png)              <!-- 默认放大；如需关闭，给这个 img 加 data-no-zoom -->
 ```
+
+## 文章目录
+
+每篇文章的右侧会自动生成目录，内容取自正文里的 `h2` 与 `h3`，不需要手动维护：
+
+- 宽屏（≥1180px）：目录固定在正文右侧，随页面滚动保持可见，当前所在章节会自动高亮
+- 窄屏：目录收起成正文上方的可折叠块，点标题行展开
+- 点击目录项平滑跳转，落到标题上时不会被顶部粘性导航挡住
+- 正文里没有 `h2`/`h3`（例如刚建好、还没写内容的文章）时不会渲染目录，文章也保持原来的单栏居中宽度
+
+实现在 `src/components/PostToc.astro`，标题数据来自 `src/pages/blog/[slug].astro` 里 `render(post)` 返回的 `headings`。想调整侧栏宽度，改 `global.css` 中 `.post-article` 的 `--toc-width` 和 `--toc-gap` 即可。
 
 ## Git 提交方式
 

@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostToc from '../../components/PostToc.astro';
 import { render } from 'astro:content';
 import { getPublishedPosts, formatDate, readingTime, encodeSlug } from '../../lib/posts';
 import type { Post } from '../../lib/posts';
@@ -13,7 +14,10 @@ export async function getStaticPaths() {
 }
 
 const { post } = Astro.props as { post: Post };
-const { Content } = await render(post);
+const { Content, headings } = await render(post);
+
+// 只有正文里存在 h2/h3 时才启用目录，否则文章保持原来的单栏居中宽度
+const tocItems = headings.filter((heading) => heading.depth === 2 || heading.depth === 3);
 
 const allPosts = await getPublishedPosts();
 const currentIndex = allPosts.findIndex((item) => item.id === post.id);
@@ -24,7 +28,7 @@ const { title, description, pubDate, tags, categories } = post.data;
 ---
 
 <BaseLayout title={title} description={description}>
-  <article class="post-article">
+  <article class:list={['post-article', { 'has-toc': tocItems.length > 0 }]}>
     <header class="post-header">
       <div class="post-meta-line">
         <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
@@ -46,8 +50,11 @@ const { title, description, pubDate, tags, categories } = post.data;
       </div>
     </header>
 
-    <div class="post-content">
-      <Content />
+    <div class="post-body">
+      <div class="post-content">
+        <Content />
+      </div>
+      <PostToc headings={headings} />
     </div>
 
     <nav class="post-pagination" aria-label="文章导航">

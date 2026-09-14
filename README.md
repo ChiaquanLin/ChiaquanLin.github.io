@@ -1,6 +1,6 @@
 # Chiaquan's Blog
 
-基于 Astro 5 的静态个人博客，本地用 Git 管理，自动部署到 GitHub Pages。支持时间轴文章页、详情页、分类、标签、关于/简历合并页、RSS、Sitemap 与基础 SEO，并内置响应式布局、深浅色模式、代码高亮、KaTeX 数学公式、文章图片点击放大查看和轻量微动效。
+基于 Astro 5 的静态个人博客，本地用 Git 管理，自动部署到 GitHub Pages。支持时间轴文章页、详情页、右侧文章目录、分类、标签、关于/简历合并页、RSS、Sitemap 与基础 SEO，并内置响应式布局、深浅色模式、代码高亮、KaTeX 数学公式、文章图片点击放大查看和轻量微动效。
 
 ## 技术栈
 
@@ -133,6 +133,17 @@ draft: false
 - `title`、`description`、`pubDate`：必填
 - `tags`、`categories`：数组，生成对应标签页/分类页
 - `draft: true`：本地可见但不会发布到线上
+
+### 文章目录
+
+文章详情页会自动根据正文里的 `h2` / `h3` 生成右侧目录，不需要手动维护：
+
+- 宽屏（≥1180px）：目录固定在正文右侧，随页面粘性滚动，当前所在章节自动高亮
+- 窄屏：目录变成正文上方的可折叠块（`<details>`），点击标题行展开
+- 点击目录项平滑跳转，标题不会被粘性头部挡住（靠 `scroll-margin-top`）
+- 正文里没有 `h2`/`h3` 时（例如刚建好还没写内容的文章）不渲染目录，文章保持原来的单栏居中宽度
+
+实现见 `src/components/PostToc.astro`，在 `src/pages/blog/[slug].astro` 中接收 `render(post)` 返回的 `headings`。栏宽通过 `.post-article` 上的 `--toc-width` / `--toc-gap` 调整，样式在 `src/styles/global.css` 的 `Article` 段落。
 
 ### 图片与 SVG 查看
 

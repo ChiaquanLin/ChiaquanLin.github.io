@@ -1,0 +1,193 @@
+---
+// 文章右侧目录：宽屏固定为粘性侧栏，窄屏折叠为可展开的分段导航。
+// 标题数据来自 [slug].astro 里 render(post) 返回的 headings。
+interface TocHeading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+interface Props {
+  headings: TocHeading[];
+}
+
+const { headings } = Astro.props;
+// 正文里的 h1 通常由页面标题承担，目录只收 h2 / h3
+const items = headings.filter((heading) => heading.depth === 2 || heading.depth === 3);
+---
+
+{
+  items.length > 0 && (
+    <details class="post-toc" open>
+      <summary class="post-toc-summary">
+        <span class="post-toc-title">本页目录</span>
+        <svg
+          class="post-toc-chevron"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M6 9l6 6 6-6" />
+        </svg>
+      </summary>
+      <nav class="post-toc-nav" aria-label="文章目录">
+        <ol class="post-toc-list">
+          {
+            items.map((item) => (
+              <li class:list={['post-toc-item', `depth-${item.depth}`]}>
+                <a href={`#${item.slug}`} data-toc-link={item.slug}>
+                  {item.text}
+                </a>
+              </li>
+            ))
+          }
+        </ol>
+      </nav>
+    </details>
+  )
+}
+
+<script is:inline>
+  // 窄屏默认折叠。内联执行，避免先展开再收起的闪烁。
+  (() => {
+    const toc = document.querySelector('.post-toc');
+    if (toc && window.matchMedia('(max-width: 1179px)').matches) toc.removeAttribute('open');
+  })();
+</script>
+
+<script>
+  const WIDE_QUERY = '(min-width: 1180px)';
+
+  // 每次 setup 都换一份新的激活项计算函数，滚动监听只绑定一次
+  /** @type {() => void} */
+  let updateActive = () => {};
+
+  // 用「时间戳节流 + 尾调用」而不是 rAF 布尔锁：
+  // rAF 回调在页面不可见/渲染被挂起时可能迟迟不触发，布尔锁会永久卡住导致高亮不再更新。
+  const THROTTLE_MS = 80;
+  let lastRun = 0;
+  let trailing = 0;
+  let lastScrollY = -1;
+
+  const runUpdate = () => {
+    lastRun = Date.now();
+    lastScrollY = Math.round(window.scrollY);
+    updateActive();
+  };
+
+  const scheduleUpdate = () => {
+    const elapsed = Date.now() - lastRun;
+    if (elapsed >= THROTTLE_MS) {
+      if (trailing) {
+        window.clearTimeout(trailing);
+        trailing = 0;
+      }
+      runUpdate();
+      return;
+    }
+    if (trailing) return;
+    trailing = window.setTimeout(() => {
+      trailing = 0;
+      runUpdate();
+    }, THROTTLE_MS - elapsed);
+  };
+
+  // 兜底：scroll 事件是在浏览器的渲染步骤里派发的，渲染被挂起时可能长时间不派发，
+  // 高亮就会停在旧章节上。这里用与渲染无关的定时器补检一次；滚动位置没变时直接返回，
+  // 不做任何布局读取，所以常态开销只是一次 scrollY 读取和一次比较。
+  let watchdog = 0;
+  const startWatchdog = () => {
+    if (watchdog) return;
+    watchdog = window.setInterval(() => {
+      if (document.visibilityState !== 'visible') return;
+      if (Math.round(window.scrollY) === lastScrollY) return;
+      scheduleUpdate();
+    }, 400);
+  };
+
+  const setup = () => {
+    const toc = document.querySelector('.post-toc');
+    const nav = toc?.querySelector('.post-toc-nav') ?? null;
+    const entries = toc
+      ? [...toc.querySelectorAll('[data-toc-link]')]
+          .map((link) => ({ link, heading: document.getElementById(link.getAttribute('data-toc-link') ?? '') }))
+          .filter((entry) => entry.heading)
+      : [];
+
+    if (!toc || entries.length === 0) {
+      updateActive = () => {};
+      return;
+    }
+
+    /** @type {any} */
+    let active = null;
+
+    const setActive = (entry) => {
+      if (active === entry) return;
+      if (active) {
+        active.link.classList.remove('is-active');
+        active.link.removeAttribute('aria-current');
+      }
+      entry.link.classList.add('is-active');
+      entry.link.setAttribute('aria-current', 'true');
+      active = entry;
+
+      // 目录本身较长时把当前项滚进可视范围：只改目录的 scrollTop，不影响页面滚动位置
+      if (!nav) return;
+      const navRect = nav.getBoundingClientRect();
+      const linkRect = entry.link.getBoundingClientRect();
+      if (linkRect.top < navRect.top || linkRect.bottom > navRect.bottom) {
+        nav.scrollTop += linkRect.top - navRect.top - (nav.clientHeight - linkRect.height) / 2;
+      }
+    };
+
+    updateActive = () => {
+      const header = document.querySelector('.site-header');
+      const offset = (header?.offsetHeight ?? 72) + 24;
+
+      let current = entries[0];
+      for (const entry of entries) {
+        if (entry.heading.getBoundingClientRect().top - offset <= 0) current = entry;
+        else break;
+      }
+
+      // 滚到底部时最后一个标题压不到基准线，直接判给最后一项
+      const doc = document.documentElement;
+      if (window.innerHeight + window.scrollY >= doc.scrollHeight - 4) {
+        current = entries[entries.length - 1];
+      }
+
+      setActive(current);
+    };
+
+    updateActive();
+  };
+
+  // 宽屏下目录是常驻侧栏（summary 不可交互），窄屏才作为可折叠块
+  const syncDisclosure = () => {
+    const toc = document.querySelector('.post-toc');
+    if (toc && window.matchMedia(WIDE_QUERY).matches) toc.setAttribute('open', '');
+  };
+
+  if (!window.__dshTocBound) {
+    window.__dshTocBound = true;
+    window.addEventListener('scroll', scheduleUpdate, { passive: true });
+    window.addEventListener('resize', scheduleUpdate);
+    window.matchMedia(WIDE_QUERY).addEventListener('change', () => {
+      syncDisclosure();
+      scheduleUpdate();
+    });
+    document.addEventListener('astro:page-load', () => {
+      syncDisclosure();
+      setup();
+    });
+    startWatchdog();
+  }
+
+  syncDisclosure();
+  setup();
+</script>

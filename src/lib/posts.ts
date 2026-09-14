@@ -52,7 +52,8 @@ export function formatShortDate(date: Date): string {
 }
 
 export function readingTime(post: Post): string {
-  const characters = post.body.replace(/\s+/g, '').length;
+  // 刚建好、正文还空着的文章没有 body，这里按 0 字处理，避免构建中断
+  const characters = (post.body ?? '').replace(/\s+/g, '').length;
   const minutes = Math.max(1, Math.round(characters / 450));
   return `${minutes} 分钟阅读`;
 }

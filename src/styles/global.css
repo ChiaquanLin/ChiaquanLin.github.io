@@ -1295,9 +1295,141 @@ html[data-theme='dark'] .theme-icon-moon {
 
 /* Article */
 .post-article {
+  --toc-width: 228px;
+  --toc-gap: 2.5rem;
   width: min(100% - 2rem, var(--text-width));
   margin: 0 auto;
   padding: 4rem 0 5rem;
+}
+
+.post-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.75rem;
+}
+
+/* 窄屏下目录是排在正文之前的可折叠块 */
+.post-toc {
+  order: -1;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.9), var(--shadow-sm);
+}
+
+.post-toc-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.7rem 0.95rem;
+  color: var(--text);
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  list-style: none;
+}
+
+.post-toc-summary::-webkit-details-marker {
+  display: none;
+}
+
+.post-toc-summary::marker {
+  content: '';
+}
+
+.post-toc-chevron {
+  width: 1rem;
+  height: 1rem;
+  color: var(--muted);
+  transition: transform 0.2s ease;
+}
+
+.post-toc[open] > .post-toc-summary .post-toc-chevron {
+  transform: rotate(180deg);
+}
+
+.post-toc-nav {
+  max-height: min(46vh, 420px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border-top: 1px solid var(--border);
+}
+
+.post-toc-list {
+  margin: 0;
+  padding: 0.4rem 0 0.55rem;
+  list-style: none;
+}
+
+.post-toc-item {
+  margin: 0;
+}
+
+.post-toc-item a {
+  display: block;
+  padding: 0.32rem 0.95rem 0.32rem 1rem;
+  border-left: 2px solid transparent;
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.5;
+  text-decoration: none;
+  transition: color 0.18s ease, background-color 0.18s ease, border-color 0.18s ease;
+}
+
+.post-toc-item a:hover {
+  color: var(--text);
+  background: var(--surface-soft);
+}
+
+.post-toc-item.depth-3 a {
+  padding-left: 1.75rem;
+  font-size: 0.82rem;
+}
+
+.post-toc-item a.is-active {
+  border-left-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: var(--accent-strong);
+  font-weight: 650;
+}
+
+/* 宽屏：目录变成右侧粘性侧栏，文章整体加宽以腾出这一列 */
+@media (min-width: 1180px) {
+  .post-article.has-toc {
+    width: min(100% - 3rem, calc(var(--text-width) + var(--toc-gap) + var(--toc-width)));
+  }
+
+  /* 标题区与翻页区留在正文列宽内，不跟着侧栏一起变宽 */
+  .post-article.has-toc > :not(.post-body) {
+    max-width: var(--text-width);
+  }
+
+  .post-article.has-toc .post-body {
+    grid-template-columns: minmax(0, 1fr) var(--toc-width);
+    gap: var(--toc-gap);
+    align-items: start;
+  }
+
+  .post-article.has-toc .post-toc {
+    order: 0;
+    position: sticky;
+    top: calc(72px + 2rem);
+    align-self: start;
+  }
+
+  /* 侧栏形态下 summary 只当作栏目标题，不再参与折叠交互 */
+  .post-article.has-toc .post-toc-summary {
+    pointer-events: none;
+  }
+
+  .post-article.has-toc .post-toc-chevron {
+    display: none;
+  }
+
+  .post-article.has-toc .post-toc-nav {
+    max-height: calc(100vh - 230px);
+  }
 }
 
 .post-header {
@@ -1359,6 +1491,16 @@ html[data-theme='dark'] .theme-icon-moon {
 
 .post-content > * {
   margin-bottom: 1.2em;
+}
+
+/* 正文首元素不留上边距，避免和右侧目录顶部错位 */
+.post-content > :first-child {
+  margin-top: 0;
+}
+
+/* 目录跳转时标题不被粘性头部挡住 */
+.post-content :is(h1, h2, h3, h4) {
+  scroll-margin-top: 96px;
 }
 
 .post-content h2 {
