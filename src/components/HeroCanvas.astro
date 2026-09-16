@@ -19,8 +19,34 @@ const hasExtra = Astro.slots.has('default');
   {
     SITE_HERO_IMAGE ? (
       <div class="hero-image-frame">
-        <img class="hero-image" src={SITE_HERO_IMAGE} alt="" />
+        {/*
+          decoding="async" 让 3840x2160 的解码离开主线程，避免首屏被解码卡住；
+          fetchpriority="high" 因为它是 LCP 元素，要和渲染阻塞的 CSS/字体抢带宽。
+          注意 canvas 分支只在没有 hero 图时才走，所以有图时没有动画在跑。
+        */}
+        <img
+          class="hero-image"
+          id="hero-image"
+          src={SITE_HERO_IMAGE}
+          alt=""
+          decoding="async"
+          fetchpriority="high"
+        />
       </div>
+      <script is:inline>
+        // 内联执行：立刻进入「加载中」状态，避免先全亮再变透明的闪烁。
+        // JS 被禁用时这段不执行，图片保持默认可见——不会出现图片消失的故障。
+        (() => {
+          const image = document.getElementById('hero-image');
+          if (!image) return;
+          image.classList.add('is-loading');
+          // 兜底：即使后面的模块脚本出错，也保证图片最终会显示
+          window.setTimeout(() => {
+            image.classList.remove('is-loading');
+            image.classList.add('is-ready');
+          }, 2500);
+        })();
+      </script>
     ) : (
       <canvas id="hero-canvas" aria-hidden="true"></canvas>
     )
@@ -39,6 +65,25 @@ const hasExtra = Astro.slots.has('default');
     const hero = document.getElementById('hero');
     const layout = document.getElementById('hero-layout');
     if (!hero) return;
+
+    // hero 图解码完成后再淡入：解码期间先显示主题色渐变，避免大图「砸」进首屏
+    const heroImage = document.getElementById('hero-image');
+    if (heroImage) {
+      const reveal = () => {
+        // 移除 is-loading 才会回到默认的 opacity:1，从而触发过渡
+        heroImage.classList.remove('is-loading');
+        heroImage.classList.add('is-ready');
+      };
+      const afterDecode = () => {
+        if (typeof heroImage.decode === 'function') heroImage.decode().then(reveal, reveal);
+        else reveal();
+      };
+      if (heroImage.complete && heroImage.naturalWidth > 0) afterDecode();
+      else {
+        heroImage.addEventListener('load', afterDecode, { once: true });
+        heroImage.addEventListener('error', reveal, { once: true });
+      }
+    }
 
     const canvas = document.getElementById('hero-canvas');
     const ctx = canvas ? canvas.getContext('2d') : null;

@@ -31,8 +31,11 @@ const EMBED_RE = /data:image\/(png|jpeg|jpg|webp);base64,([A-Za-z0-9+/=]+)/g;
 /**
  * 额外的大图：首页整屏背景。它不在文章正文里，尺寸和质量单独控制——
  * 3840px 是为了覆盖 4K 全屏，实测原图 6.6MB 转 WebP 后约 200KB 且像素差异 < 2/255。
+ *
+ * 源文件放在 src/assets/ 而不是 public/：放进 public/ 会被原样部署，
+ * 那 6.6MB 就会一直躺在服务器上（哪怕页面不引用它）。这里只导出压缩后的 WebP。
  */
-const EXTRA_ASSETS = [{ source: 'public/hero.jpg', output: 'hero.webp', width: 3840, quality: 80 }];
+const EXTRA_ASSETS = [{ source: 'src/assets/hero.jpg', output: 'hero.webp', width: 3840, quality: 80 }];
 
 const posix = (p) => p.split(sep).join('/');
 const kb = (n) => `${(n / 1024).toFixed(1)}KB`;

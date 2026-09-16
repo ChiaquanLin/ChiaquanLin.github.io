@@ -354,7 +354,11 @@ html[data-theme='dark'] .theme-icon-moon {
   inset: 0;
   z-index: -2;
   overflow: hidden;
-  background: transparent;
+  /* 图还没到时先显示主题色渐变，避免首屏一大片空白 */
+  background:
+    radial-gradient(circle at 28% 32%, color-mix(in srgb, var(--accent) 24%, transparent), transparent 62%),
+    radial-gradient(circle at 76% 68%, color-mix(in srgb, var(--accent-2) 18%, transparent), transparent 56%),
+    var(--bg-soft);
 }
 
 .hero-image {
@@ -363,6 +367,19 @@ html[data-theme='dark'] .theme-icon-moon {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: opacity 520ms ease-out;
+}
+
+/* 加载中先透明（渐变垫底），解码完成由 JS 加 is-ready 淡入。
+   默认状态是可见的，所以 JS 不可用时图片照常显示。 */
+.hero-image.is-loading {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-image {
+    transition: none;
+  }
 }
 
 .hero-layout {

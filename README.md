@@ -195,9 +195,18 @@ draft: false
 - 也可以手动执行 `pnpm optimize:images`
 - 新增图片后如果 `pnpm dev` 正在运行，需要重启一次（清单在配置加载时读取）
 
-首页整屏背景图（`public/hero.jpg`）也走同一条流水线：脚本会额外生成 `public/img/hero.webp`，
-`SITE_HERO_IMAGE` 指向它。原图 6.64MB → 约 207KB（3840×2160，像素差异 < 2/255）。
-换了 `hero.jpg` 之后重新构建即可，不要把这个常量改回 `/hero.jpg`。
+首页整屏背景图也走同一条流水线，但**源文件放在 `src/assets/hero.jpg`，不要放回 `public/`**：
+`public/` 里的文件会被原样部署，那张 6.64MB 的原图就会一直躺在服务器上（哪怕页面根本不引用它，
+历史访客或爬虫仍可能把它整份拉走）。脚本会导出 `public/img/hero.webp`，`SITE_HERO_IMAGE` 指向它。
+
+首页背景图的加载体验单独做了三件事，都不改动画质（仍是 3840×2160，与原图像素差异 < 2/255）：
+
+- `decoding="async"`：3840×2160 的解码离开主线程，首屏不被解码卡住
+- `fetchpriority="high"`：它是 LCP 元素，优先和渲染阻塞的 CSS / 字体抢带宽
+- 主题色渐变垫底 + 解码完成后淡入（`HeroCanvas.astro` + `global.css` 的 `.hero-image`）：
+  首屏立刻有内容，而不是先白一片再「砸」进一张大图。禁用 JS 时图片照常显示
+
+替换图片：覆盖 `src/assets/hero.jpg` 后重新构建；重新生成默认占位图用 `pnpm generate:hero`。
 
 ### 数学公式
 

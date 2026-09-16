@@ -48,11 +48,14 @@ const svg = `
 </svg>
 `;
 
-const outDir = path.join(process.cwd(), 'public');
+// 源文件放 src/assets/：它不会被打包部署，只有 optimize-images.mjs 派生的
+// public/img/hero.webp 会上线。public/ 里的原图会被原样部署，白白多 6MB+。
+const outDir = path.join(process.cwd(), 'src', 'assets');
 fs.mkdirSync(outDir, { recursive: true });
 
 await sharp(Buffer.from(svg))
   .jpeg({ quality: 86, chromaSubsampling: '4:4:4' })
   .toFile(path.join(outDir, 'hero.jpg'));
 
-console.log(`已生成首页背景图：public/hero.jpg (${width}x${height})`);
+console.log(`已生成首页背景图：src/assets/hero.jpg (${width}x${height})`);
+console.log('构建时会自动压缩成 public/img/hero.webp');

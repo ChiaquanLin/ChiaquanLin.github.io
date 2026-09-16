@@ -1,4 +1,4 @@
----
+﻿---
 title: 个人博客项目结构与使用指南
 description: 一篇看懂这个博客：项目目录、页面组成、写作方式、Git 提交与 GitHub Pages 自动部署。
 pubDate: 2026-08-15
@@ -14,47 +14,52 @@ draft: false
 
 ```text
 personal_blog/
-├── public/                    # 静态资源
-│   ├── hero.jpg               # 首页整屏背景图（可替换为 PNG/WebP）
+├── public/                           # 直接按原样部署的静态资源
 │   └── favicon.svg
 ├── src/
-│   ├── components/             # 页面组件
-│   │   ├── HeroCanvas.astro    # 首页画幅
-│   │   ├── SiteHeader.astro    # 顶部导航与主题切换
-│   │   ├── SiteFooter.astro    # 页脚
-│   │   ├── PostCard.astro      # 文章卡片
-│   │   ├── PostToc.astro       # 文章右侧目录
-│   │   ├── ImageLightbox.astro # 文章图片点击放大查看器
-│   │   └── ResumeCard.astro    # 简历卡片
+│   ├── assets/
+│   │   └── hero.jpg                  # 首页整屏背景图源文件（只用于派生，不直接部署）
+│   ├── components/                   # 页面组件
+│   │   ├── HeroCanvas.astro          # 首页画幅（背景图加载与淡入）
+│   │   ├── SiteHeader.astro          # 顶部导航与主题切换
+│   │   ├── SiteFooter.astro          # 页脚
+│   │   ├── PostCard.astro            # 文章卡片
+│   │   ├── PostToc.astro             # 文章右侧目录
+│   │   ├── ImageLightbox.astro       # 文章图片点击放大查看器
+│   │   └── ResumeCard.astro          # 简历卡片
 │   ├── content/
-│   │   ├── blog/               # Markdown 文章目录
-│   │   └── config.ts           # 文章字段定义
+│   │   ├── blog/                     # Markdown 文章目录
+│   │   └── config.ts                 # 文章字段定义
+│   ├── images/                       # 文章图片源文件
 │   ├── layouts/
-│   │   └── BaseLayout.astro    # 全局布局、主题与页面切换
-│   ├── pages/                  # 路由页面
-│   │   ├── index.astro         # 首页
-│   │   ├── blog.astro          # 文章列表 + 时间线 + 分类筛选
-│   │   ├── blog/[slug].astro   # 文章详情
-│   │   ├── tags/               # 标签页
-│   │   ├── categories/         # 分类页
-│   │   ├── about.astro         # 关于/简历
-│   │   └── rss.xml.js          # RSS
+│   │   └── BaseLayout.astro          # 全局布局、主题与页面切换
+│   ├── lib/
+│   │   ├── posts.ts                  # 文章数据工具
+│   │   └── remark-image-variants.mjs # 构建时把图片换成压缩显示版
+│   ├── pages/                        # 路由页面
+│   │   ├── index.astro               # 首页
+│   │   ├── blog.astro                # 文章列表 + 时间线 + 分类筛选
+│   │   ├── blog/[slug].astro         # 文章详情
+│   │   ├── tags/                     # 标签页
+│   │   ├── categories/               # 分类页
+│   │   ├── about.astro               # 关于/简历
+│   │   └── rss.xml.js                # RSS
 │   └── styles/
-│       └── global.css          # 全部主题变量与样式
+│       └── global.css                # 全部主题变量与样式
 ├── scripts/
-│   ├── new-post.mjs           # 新建文章脚本
-│   ├── optimize-images.mjs    # 生成图片压缩显示版与原图副本
-│   └── generate-hero.mjs      # 生成默认首页图
+│   ├── new-post.mjs                  # 新建文章脚本
+│   ├── optimize-images.mjs           # 生成图片压缩显示版与首页背景图
+│   └── generate-hero.mjs             # 生成默认首页图
 ├── .github/workflows/
-│   └── deploy.yml             # GitHub Pages 自动部署
-├── astro.config.mjs           # Astro 配置
-├── pnpm-workspace.yaml        # pnpm 构建白名单
+│   └── deploy.yml                    # GitHub Pages 自动部署
+├── astro.config.mjs                  # Astro 配置
+├── pnpm-workspace.yaml               # pnpm 构建白名单
 └── package.json
 ```
 
 ## 页面与功能
 
-- 首页：整屏画幅 + 最新文章列表 + 主题标签，背景图在 `public/hero.jpg`，路径由 `src/consts.ts` 的 `SITE_HERO_IMAGE` 控制。
+- 首页：整屏画幅 + 最新文章列表 + 主题标签，背景图源文件在 `src/assets/hero.jpg`，构建时压缩成 `/img/hero.webp`，路径由 `src/consts.ts` 的 `SITE_HERO_IMAGE` 控制。
 - 文章页：左侧按年份展示时间线，右侧文章卡片支持按分类筛选。
 - 标签/分类：由文章 frontmatter 自动生成对应列表页。
 - 关于/简历：`/about` 合并展示个人简介与简历，内容在 `src/components/ResumeCard.astro`。
@@ -155,7 +160,9 @@ $$
 
 生成的 `public/img/`、`public/img-full/` 和 `src/lib/image-variants.json` 都是构建产物，已加入 `.gitignore`。`pnpm build` 与 `pnpm dev` 会自动先跑这个脚本，也可以手动执行 `pnpm optimize:images`；新增图片后如果开发服务器还开着，重启一次即可。
 
-首页那张整屏背景图也走同一条流水线：脚本会额外生成 `public/img/hero.webp`，`src/consts.ts` 里的 `SITE_HERO_IMAGE` 指向它。原图 6.64MB 压到约 207KB（仍是 3840×2160，像素差异小于 2/255）。换了 `hero.jpg` 重新构建即可，不要把常量改回 `/hero.jpg`。
+首页那张整屏背景图也走同一条流水线，但源文件放在 `src/assets/hero.jpg`（**不要放回 `public/`**：`public/` 里的文件会被原样部署，6.64MB 的原图会一直躺在服务器上，哪怕页面不引用它）。脚本会导出 `public/img/hero.webp`，`src/consts.ts` 里的 `SITE_HERO_IMAGE` 指向它。
+
+首页背景图的加载体验另外做了三件事，都不改动画质（仍是 3840×2160，与原图像素差异小于 2/255）：`decoding="async"` 让解码离开主线程、`fetchpriority="high"` 让它优先抢带宽、主题色渐变垫底并在解码完成后淡入。首屏因此立刻有内容，而不是先白一片再砸进一张大图；禁用 JS 时图片照常显示。
 
 ## Git 提交方式
 
