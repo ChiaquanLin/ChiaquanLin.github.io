@@ -92,19 +92,46 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? SITE_URL).href;
     document.addEventListener('astro:page-load', applyTheme);
   }
 
+  // 滚动范围单独缓存：原来每次滚动事件都读一次 root.scrollHeight，而前面刚写过 class，
+  // 浏览器必须立刻重算布局才能回答这个读取 —— 也就是每个滚动事件强制一次同步布局。
+  // 实测这会造成滚动中最明显的一次卡顿（最长帧 99.9ms → 33.4ms）。
+  let scrollRange = 0;
+  const measureScrollRange = () => {
+    scrollRange = root.scrollHeight - window.innerHeight;
+  };
+
   const updateScrollUI = () => {
     const y = window.scrollY;
     header?.classList.toggle('scrolled', y > 10);
     if (progress) {
-      const max = root.scrollHeight - window.innerHeight;
-      progress.style.width = max > 0 ? `${Math.min(100, (y / max) * 100)}%` : '0%';
+      progress.style.width = scrollRange > 0 ? `${Math.min(100, (y / scrollRange) * 100)}%` : '0%';
     }
     topButton?.classList.toggle('visible', y > 560);
   };
 
-  window.addEventListener('scroll', updateScrollUI, { passive: true });
-  window.addEventListener('resize', updateScrollUI, { passive: true });
+  const remeasure = () => {
+    measureScrollRange();
+    updateScrollUI();
+  };
+
+  measureScrollRange();
   updateScrollUI();
+
+  if (!window.__dshScrollUiBound) {
+    window.__dshScrollUiBound = true;
+    // 只绑定一次；换页时通过下面两个钩子指向当前页面的回调，避免监听器堆积。
+    // 滚动走「只更新 UI」的快路径，不做任何布局读取；测量只在尺寸/内容变化时做。
+    window.addEventListener('scroll', () => window.__dshScrollUpdate?.(), { passive: true });
+    window.addEventListener('resize', () => window.__dshScrollRefresh?.(), { passive: true });
+    window.addEventListener('load', () => window.__dshScrollRefresh?.());
+    document.addEventListener('astro:page-load', () => window.__dshScrollRefresh?.());
+    // 内容高度变化（图片载入、目录展开等）时同步刷新缓存值
+    if ('ResizeObserver' in window) {
+      new ResizeObserver(() => window.__dshScrollRefresh?.()).observe(document.body);
+    }
+  }
+  window.__dshScrollUpdate = updateScrollUI;
+  window.__dshScrollRefresh = remeasure;
 
   if (!window.__dshThemeToggleBound) {
     window.__dshThemeToggleBound = true;

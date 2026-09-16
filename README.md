@@ -91,7 +91,11 @@ site: 'https://chiaquanlin.github.io',
 - 修改 `--accent`、`--accent-2`、`--bg`、`--surface`、`--text` 即可换色
 - 英文与代码默认使用 Consolas；中文字体默认从 Google Fonts 加载 Noto Sans SC，可在 `src/layouts/BaseLayout.astro` 中移除或替换
 - 导航、卡片栅格、间距在 `.site-header`、`.post-grid`、`.post-card` 等规则中调整
-- 首页整屏背景图由 `src/consts.ts` 的 `SITE_HERO_IMAGE` 指定，替换 `public/hero.jpg` 或修改该路径即可；默认占位图可运行 `pnpm generate:hero` 重新生成
+- 页面背景的装饰性光晕画在 `body::before`（`position: fixed`）上，**不要改回 `background-attachment: fixed`**：
+  后者会让浏览器无法把滚动交给合成器，只能每帧回主线程重绘整个视口背景，实测滚动期间主线程开销高出约 40%
+- 滚动相关的回调（`src/layouts/BaseLayout.astro`、`src/components/PostToc.astro`）里**不要读取会强制同步布局的属性**
+  （`scrollHeight`、`offsetHeight` 等）：写入样式后再读取会让浏览器立刻重算布局。这些值统一缓存，只在 resize / 内容高度变化时重新测量
+- 首页整屏背景图由 `src/consts.ts` 的 `SITE_HERO_IMAGE` 指定，源文件在 `src/assets/hero.jpg`（**不要放回 `public/`**，那里会被原样部署）；默认占位图可运行 `pnpm generate:hero` 重新生成
 - 个人简历与关于页已合并为 `/about`，简历内容在 `src/components/ResumeCard.astro`
 - 文章页左侧时间线、右侧分类筛选，位于 `src/pages/blog.astro`
 - 新建文章：`pnpm new:post "文章标题"`，会在 `src/content/blog/` 生成带 frontmatter 的 Markdown

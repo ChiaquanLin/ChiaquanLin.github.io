@@ -65,6 +65,8 @@ const items = headings.filter((heading) => heading.depth === 2 || heading.depth 
   // 每次 setup 都换一份新的激活项计算函数，滚动监听只绑定一次
   /** @type {() => void} */
   let updateActive = () => {};
+  /** @type {() => void} */
+  let measureCurrent = () => {};
 
   // 用「时间戳节流 + 尾调用」而不是 rAF 布尔锁：
   // rAF 回调在页面不可见/渲染被挂起时可能迟迟不触发，布尔锁会永久卡住导致高亮不再更新。
@@ -120,11 +122,22 @@ const items = headings.filter((heading) => heading.depth === 2 || heading.depth 
 
     if (!toc || entries.length === 0) {
       updateActive = () => {};
+      measureCurrent = () => {};
       return;
     }
 
     /** @type {any} */
     let active = null;
+
+    // 基准线与滚动范围都缓存起来。offsetHeight / scrollHeight 这类读取会强制同步布局，
+    // 放在滚动回调里等于每次滚动都让浏览器重算一次布局（实测这是滚动中最明显的一次卡顿）。
+    let headerOffset = 96;
+    let docRange = 0;
+    const measure = () => {
+      const header = document.querySelector('.site-header');
+      headerOffset = (header?.offsetHeight ?? 72) + 24;
+      docRange = document.documentElement.scrollHeight - window.innerHeight;
+    };
 
     const setActive = (entry) => {
       if (active === entry) return;
@@ -146,25 +159,23 @@ const items = headings.filter((heading) => heading.depth === 2 || heading.depth 
     };
 
     updateActive = () => {
-      const header = document.querySelector('.site-header');
-      const offset = (header?.offsetHeight ?? 72) + 24;
-
       let current = entries[0];
       for (const entry of entries) {
-        if (entry.heading.getBoundingClientRect().top - offset <= 0) current = entry;
+        if (entry.heading.getBoundingClientRect().top - headerOffset <= 0) current = entry;
         else break;
       }
 
       // 滚到底部时最后一个标题压不到基准线，直接判给最后一项
-      const doc = document.documentElement;
-      if (window.innerHeight + window.scrollY >= doc.scrollHeight - 4) {
+      if (window.scrollY >= docRange - 4) {
         current = entries[entries.length - 1];
       }
 
       setActive(current);
     };
 
+    measure();
     updateActive();
+    measureCurrent = measure;
   };
 
   // 宽屏下目录是常驻侧栏（summary 不可交互），窄屏才作为可折叠块
@@ -176,9 +187,14 @@ const items = headings.filter((heading) => heading.depth === 2 || heading.depth 
   if (!window.__dshTocBound) {
     window.__dshTocBound = true;
     window.addEventListener('scroll', scheduleUpdate, { passive: true });
-    window.addEventListener('resize', scheduleUpdate);
+    // 视口或内容尺寸变化会让缓存的基准线/滚动范围失效，这里重新测量
+    window.addEventListener('resize', () => {
+      measureCurrent();
+      scheduleUpdate();
+    });
     window.matchMedia(WIDE_QUERY).addEventListener('change', () => {
       syncDisclosure();
+      measureCurrent();
       scheduleUpdate();
     });
     document.addEventListener('astro:page-load', () => {
