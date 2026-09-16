@@ -205,10 +205,15 @@ img {
   position: sticky;
   top: 0;
   z-index: 70;
+  /*
+    这里原本是 82% 透明 + backdrop-filter: blur(14px) 的毛玻璃。
+    粘性头部上的 backdrop-filter 需要每一帧把身后滚过的内容重新模糊一遍，
+    实测占文章页滚动 CPU 的 15~23%（合成器线程上的 DirectRenderer::DrawFrame
+    与 SoftwareRenderer::DoDrawQuad 明显下降），所以改成接近不透明的纯色，
+    保留原有的边框与投影变化，观感差异很小。
+  */
   background: var(--bg);
-  background: color-mix(in srgb, var(--bg) 82%, transparent);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  background: color-mix(in srgb, var(--bg) 96%, transparent);
   border-bottom: 1px solid transparent;
   transition: border-color 0.25s ease, box-shadow 0.25s ease;
 }
@@ -459,7 +464,20 @@ html[data-theme='dark'] .theme-icon-moon {
   line-height: 0.95;
   letter-spacing: 0;
   color: #ffffff;
-  filter: drop-shadow(0 0.18em 0.55em rgb(0 10 37 / 0.6)) drop-shadow(-0.08em 0 1.8em rgb(90 167 216 / 0.5)) drop-shadow(0.16em 0.05em 2.2em rgb(229 72 77 / 0.38));
+  /*
+    这里的模糊半径是按 em 算的，字号最大 12rem(192px)，所以原来的
+    0.55em / 1.8em / 2.2em 等于 105px / 345px / 422px 的高斯模糊 ×3 层。
+    而标题上还挂着无限循环的渐变动画（见下面的 hero-gradient-shift），
+    等于每一帧都要重算这三次巨型模糊 —— 实测这一项就占了首页滚动 CPU 的 97%
+    （追踪事件总时长 40 万 ms → 1.1 万 ms，约 35 倍差距）。
+
+    注意模糊代价随半径超线性增长：半径乘积面积大约翻 4 倍，开销就翻 4 倍
+    （实测 0.4em/0.5em 一组仍是 5~7 万 ms，压到 0.22em/0.26em 才回到 1 万 ms 量级）。
+    所以这里保留「深色描边 + 冷暖两色柔光」的观感，但半径收到 0.06/0.22/0.26em，
+    代价与完全不画阴影持平，光晕比原来更收拢。
+  */
+  filter: drop-shadow(0 0.04em 0.06em rgb(0 10 37 / 0.6)) drop-shadow(0 0 0.22em rgb(90 167 216 / 0.4))
+    drop-shadow(0.045em 0.02em 0.26em rgb(229 72 77 / 0.3));
 }
 
 @supports ((-webkit-background-clip: text) or (background-clip: text)) {
@@ -472,7 +490,16 @@ html[data-theme='dark'] .theme-icon-moon {
     -webkit-text-fill-color: transparent;
     color: transparent;
     -webkit-text-stroke: 0.01em rgb(255 255 255 / 0.5);
-    animation: hero-gradient-shift 7s ease-in-out infinite alternate;
+    /*
+      这里原本还有 animation: hero-gradient-shift 7s infinite alternate。
+      渐变动画会驱动 background-position，而 background-position 无法交给合成器，
+      所以标题每一帧都要重新绘制一遍（192px 字号 + background-clip: text），
+      并且会让同一元素上的 filter 也跟着每帧重算 —— 这是一个常驻 60fps 的开销，
+      页面在首页静止不动时也一直在烧 CPU。
+      改成静态后渲染结果与动画起始帧完全一致，只是渐变不再缓慢流动。
+      想要恢复流动效果，把下面这行注释放开即可（代价是常驻重绘）。
+    */
+    /* animation: hero-gradient-shift 7s ease-in-out infinite alternate; */
   }
 }
 
