@@ -163,6 +163,38 @@ draft: false
 ![不放大](./plain.png)               <!-- 需要时给这个 img 加 data-no-zoom -->
 ```
 
+### 图片压缩与原图
+
+正文里显示的是**压缩版**，点击放大时才加载**原图**——页面加载只下载小图，想看细节再取原图，两边都不吃亏。
+
+图片统一放在 `src/images/`，Markdown 照常写相对路径即可，构建时会自动替换：
+
+```md
+![示意图](../../images/gym.svg)
+```
+
+实际产出：
+
+```html
+<img src="/img/gym.svg"           <!-- 压缩显示版 -->
+     data-full-src="/img-full/gym.svg"   <!-- 原图，灯箱点击时才下载 -->
+     loading="lazy" width="4172" height="3728">
+```
+
+处理规则见 `scripts/optimize-images.mjs`：
+
+- **SVG**：只把它内嵌的 base64 位图重压成 WebP，矢量和内嵌字体原样保留。
+  这样做是因为 librsvg（sharp 依赖）不支持 SVG 里的 `@font-face`，如果整体栅格化，
+  Excalidraw 的手写体会被换成回退字体、渲染结果明显走样（实测平均差 11~15）。
+  只重压位图的方案实测渲染差异几乎为零（平均差 0.02）。
+- **栅格图**（png / jpg / webp / avif）：转 WebP，最长边限制 1720px（正文列 860px 的 2 倍屏）。
+
+生成的 `public/img/`、`public/img-full/`、`src/lib/image-variants.json` 都是构建产物，已在 `.gitignore` 中忽略：
+
+- `pnpm build` / `pnpm dev` 会自动先跑 `prebuild` / `predev`
+- 也可以手动执行 `pnpm optimize:images`
+- 新增图片后如果 `pnpm dev` 正在运行，需要重启一次（清单在配置加载时读取）
+
 ### 数学公式
 
 正文支持 KaTeX 语法，行内公式用单个 `$` 包裹，块级公式必须把 `$$` 单独写成一行：

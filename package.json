@@ -7,10 +7,13 @@
     "node": ">=18.17.1"
   },
   "scripts": {
+    "predev": "node scripts/optimize-images.mjs",
     "dev": "astro dev",
+    "prebuild": "node scripts/optimize-images.mjs",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
+    "optimize:images": "node scripts/optimize-images.mjs",
     "new:post": "node scripts/new-post.mjs",
     "post:new": "node scripts/new-post.mjs",
     "generate:hero": "node scripts/generate-hero.mjs"

@@ -21,3 +21,10 @@ yarn-error.log*
 # OS files
 .DS_Store
 Thumbs.db
+
+excalidraws/
+
+# 由 scripts/optimize-images.mjs 在 prebuild/predev 阶段生成
+public/img/
+public/img-full/
+src/lib/image-variants.json

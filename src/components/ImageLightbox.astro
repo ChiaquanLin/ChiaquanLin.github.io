@@ -366,11 +366,33 @@
 
     view.lastFocus = document.activeElement;
 
-    image.src = source.currentSrc || source.src;
+    // 正文里显示的是压缩版，data-full-src 指向原图。
+    // 先秒开已缓存的压缩版，再在后台把原图换上来，避免等待大图时白屏。
+    const displaySrc = source.currentSrc || source.src;
+    const fullSrc = source.dataset.fullSrc || '';
+    view.token = (view.token ?? 0) + 1;
+    const token = view.token;
+
+    image.src = displaySrc;
     image.alt = source.alt || '';
     for (const attribute of ['width', 'height']) {
       if (source.hasAttribute(attribute)) image.setAttribute(attribute, source.getAttribute(attribute));
       else image.removeAttribute(attribute);
+    }
+
+    if (fullSrc && fullSrc !== displaySrc) {
+      const full = new Image();
+      full.decoding = 'async';
+      full.addEventListener('load', () => {
+        // 期间用户可能已经关掉或换了一张图
+        if (!view.open || view.token !== token) return;
+        view.image.src = fullSrc;
+        onImageLoad();
+      });
+      full.src = fullSrc;
+      view.pendingFull = full;
+    } else {
+      view.pendingFull = null;
     }
 
     root.hidden = false;

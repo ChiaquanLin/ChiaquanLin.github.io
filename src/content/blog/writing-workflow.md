@@ -43,6 +43,7 @@ personal_blog/
 │       └── global.css          # 全部主题变量与样式
 ├── scripts/
 │   ├── new-post.mjs           # 新建文章脚本
+│   ├── optimize-images.mjs    # 生成图片压缩显示版与原图副本
 │   └── generate-hero.mjs      # 生成默认首页图
 ├── .github/workflows/
 │   └── deploy.yml             # GitHub Pages 自动部署
@@ -136,6 +137,23 @@ $$
 - 正文里没有 `h2`/`h3`（例如刚建好、还没写内容的文章）时不会渲染目录，文章也保持原来的单栏居中宽度
 
 实现在 `src/components/PostToc.astro`，标题数据来自 `src/pages/blog/[slug].astro` 里 `render(post)` 返回的 `headings`。想调整侧栏宽度，改 `global.css` 中 `.post-article` 的 `--toc-width` 和 `--toc-gap` 即可。
+
+## 图片压缩与放大原图
+
+正文里显示的是**压缩版**，点击放大时才加载**原图**。这样正常浏览只下载小图，想看细节时再取原图，两边都不吃亏。
+
+图片统一放进 `src/images/`，Markdown 照常写相对路径就行，构建时会自动替换成压缩版并把原图地址写进 `data-full-src`：
+
+```md
+![示意图](../../images/gym.svg)
+```
+
+处理规则在 `scripts/optimize-images.mjs`：
+
+- **SVG**：只把它内嵌的 base64 位图重压成 WebP，矢量和内嵌字体原样保留。之所以不整体栅格化，是因为 librsvg 不支持 SVG 里的 `@font-face`，Excalidraw 的手写体会被换成回退字体、渲染结果走样；只重压位图则几乎看不出差别。
+- **栅格图**（png / jpg / webp / avif）：转 WebP，最长边限制 1720px（正文列 860px 的 2 倍屏）。
+
+生成的 `public/img/`、`public/img-full/` 和 `src/lib/image-variants.json` 都是构建产物，已加入 `.gitignore`。`pnpm build` 与 `pnpm dev` 会自动先跑这个脚本，也可以手动执行 `pnpm optimize:images`；新增图片后如果开发服务器还开着，重启一次即可。
 
 ## Git 提交方式
 
