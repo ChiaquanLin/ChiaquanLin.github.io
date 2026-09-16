@@ -155,6 +155,8 @@ $$
 
 生成的 `public/img/`、`public/img-full/` 和 `src/lib/image-variants.json` 都是构建产物，已加入 `.gitignore`。`pnpm build` 与 `pnpm dev` 会自动先跑这个脚本，也可以手动执行 `pnpm optimize:images`；新增图片后如果开发服务器还开着，重启一次即可。
 
+首页那张整屏背景图也走同一条流水线：脚本会额外生成 `public/img/hero.webp`，`src/consts.ts` 里的 `SITE_HERO_IMAGE` 指向它。原图 6.64MB 压到约 207KB（仍是 3840×2160，像素差异小于 2/255）。换了 `hero.jpg` 重新构建即可，不要把常量改回 `/hero.jpg`。
+
 ## Git 提交方式
 
 写完文章后，用一条命令提交并推送即可上线：

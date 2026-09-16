@@ -28,6 +28,12 @@ const SVG_EMBED_QUALITY = 88;
 const RASTER_EXT = new Set(['.png', '.jpg', '.jpeg', '.webp', '.avif']);
 const EMBED_RE = /data:image\/(png|jpeg|jpg|webp);base64,([A-Za-z0-9+/=]+)/g;
 
+/**
+ * 额外的大图：首页整屏背景。它不在文章正文里，尺寸和质量单独控制——
+ * 3840px 是为了覆盖 4K 全屏，实测原图 6.6MB 转 WebP 后约 200KB 且像素差异 < 2/255。
+ */
+const EXTRA_ASSETS = [{ source: 'public/hero.jpg', output: 'hero.webp', width: 3840, quality: 80 }];
+
 const posix = (p) => p.split(sep).join('/');
 const kb = (n) => `${(n / 1024).toFixed(1)}KB`;
 
@@ -147,6 +153,24 @@ async function main() {
   }
 
   await writeFile(MANIFEST, `${JSON.stringify(manifest, null, 2)}\n`, 'utf8');
+
+  for (const extra of EXTRA_ASSETS) {
+    const source = join(ROOT, extra.source);
+    try {
+      await stat(source);
+    } catch {
+      continue;
+    }
+    const buffer = await sharp(source)
+      .resize({ width: extra.width, withoutEnlargement: true })
+      .webp({ quality: extra.quality, effort: 5 })
+      .toBuffer();
+    await writeFile(join(DISPLAY_DIR, extra.output), buffer);
+    const sourceSize = (await stat(source)).size;
+    totalBefore += sourceSize;
+    totalDisplay += buffer.length;
+    console.log(`  ${extra.source} → img/${extra.output}  ${kb(sourceSize)} → ${kb(buffer.length)}`);
+  }
 
   const savedPct = totalBefore > 0 ? (100 - (totalDisplay / totalBefore) * 100).toFixed(1) : '0';
   console.log(`\n共处理 ${changed} 张：${kb(totalBefore)} → ${kb(totalDisplay)}（省 ${savedPct}%）`);

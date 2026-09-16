@@ -195,6 +195,10 @@ draft: false
 - 也可以手动执行 `pnpm optimize:images`
 - 新增图片后如果 `pnpm dev` 正在运行，需要重启一次（清单在配置加载时读取）
 
+首页整屏背景图（`public/hero.jpg`）也走同一条流水线：脚本会额外生成 `public/img/hero.webp`，
+`SITE_HERO_IMAGE` 指向它。原图 6.64MB → 约 207KB（3840×2160，像素差异 < 2/255）。
+换了 `hero.jpg` 之后重新构建即可，不要把这个常量改回 `/hero.jpg`。
+
 ### 数学公式
 
 正文支持 KaTeX 语法，行内公式用单个 `$` 包裹，块级公式必须把 `$$` 单独写成一行：
