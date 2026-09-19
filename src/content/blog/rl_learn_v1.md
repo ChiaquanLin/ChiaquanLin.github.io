@@ -1,6 +1,6 @@
 ---
-title: 强化学习入门笔记（一）
-description: 用于记录《Modern LR》一书强化学习笔记相关内容以及自己的理解
+title: 强化学习之入门笔记《Hand on Modern RL》（一）
+description: 用于记录《Hand on Modern RL》一书强化学习笔记相关内容以及自己的理解
 pubDate: 2026-09-13
 tags: [深度强化学习, PPO]
 categories: [技术]
