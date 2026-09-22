@@ -250,7 +250,7 @@ class CartPoleEnv(gym.Env):
             self.viewer = None
 ```
 
-![gym&mujoco](image.png)
+![gym&mujoco](../../images/gym_mujoco.svg)
 
 ### 确认打印关节顺序
 ```python
