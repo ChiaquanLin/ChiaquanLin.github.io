@@ -8,10 +8,10 @@ draft: false
 ---
 
 
-# **CartPole** 入门
+## **CartPole** 入门
 
-## 概念理解
-### 状态价值 State Value
+### 概念理解
+#### 状态价值 State Value
 $V(S_t)$ 表示在一定策略下当前状态$t$下到未来终止状态这个期间获得的价值（根据获取奖励计算的累计折扣回报的期望值）
 
 $V(S_{t+1})$ 表示在一定策略下状态$t+1$下到未来终止状态这个期间获得的价值（根据获取奖励计算的累计折扣回报的期望值）
@@ -27,7 +27,7 @@ $V(s_{t+1}) = E[r_{t+1} + γ * r_{t+2} + γ^2 * r_{t+3} + ... + γ^{end-t-1} * r
 
 其中，$end$ 为终止时刻。$\gamma$为折扣因子。其中 $E[r_t]$ 为即时奖励，等于 $V(s_t)-\gamma*V(s_{t+1})$
 
-### 时序差分误差 Temporal-difference Error [TD误差]
+#### 时序差分误差 Temporal-difference Error [TD误差]
 
 $$
 \delta_t = \underbrace{r_t}_{\text{实际采样}} + \gamma \times \underbrace{V(S_{t+1})}_{\text{预测}} - \underbrace{V(S_t)}_{\text{预测}}
@@ -44,7 +44,7 @@ $V(S_{t+1})$ 智能体对下一个状态 $S_{t+1}$ 价值的主观猜测。和 $
 
 TD 学习的本质，就是用这个包含“部分真实、部分估计”的 TD 目标 去纠偏当前的 预测 $V(S_t)$。两者相减产生的误差（$\delta_t = \text{Target} - \text{Prediction}$）就是推动模型不断进化的方向盘。
 
-### 广义优势估计 Generalized Advantage Estimation (GAE)
+#### 广义优势估计 Generalized Advantage Estimation (GAE)
 
 $$
 \hat{A} = \delta_t + \gamma * \lambda * \delta_{t+1} + (\gamma * \lambda)^2 * \delta_{t+2} + ...
@@ -74,7 +74,7 @@ $$
 A_t^{(k)} = \sum_{l=0}^{k-1} \gamma^l \delta_{t+l}^V = \delta_t^V + \gamma \delta_{t+1}^V + \gamma^2 \delta_{t+2}^V + \dots + \gamma^{k-1} \delta_{t+k-1}^V
 $$
 
-### 概率比 Probability Ratios
+#### 概率比 Probability Ratios
 
 为了衡量新旧策略的差距，PPO 引入了概率比 $r_t(\theta)$：
 $$
@@ -88,6 +88,6 @@ $$
 
 ---
 
-## 图示笔记
+### 图示笔记
 
 ![Cartpole PPO](../../images/cartpole_ppo.svg)

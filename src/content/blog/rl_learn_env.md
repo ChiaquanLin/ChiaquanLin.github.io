@@ -7,7 +7,7 @@ categories: [技术]
 draft: false
 ---
 
-# Gymnasium 环境学习
+## Gymnasium 环境学习
 
 ```python
 
@@ -84,7 +84,7 @@ class SimpleGridEnv(gym.Env):
 
 ![gym环境配置接口](../../images/gym.svg)
 
-### 1. 必须定义的参数
+#### 1. 必须定义的参数
 
 **动作空间**：self.action_space
 
@@ -99,8 +99,8 @@ class SimpleGridEnv(gym.Env):
 
 
 
-# MuJoCo 仿真环境
-## XML文件
+## MuJoCo 仿真环境
+### XML文件
 
 ```xml
 <mujoco model="cartpole">
@@ -142,7 +142,7 @@ class SimpleGridEnv(gym.Env):
 
 ![mujoco](../../images/mujoco.svg)
 
-# Gymnasium 和 Mujoco 结合
+## Gymnasium 和 Mujoco 结合
 
 ```XML
 <mujoco model="cartpole">
@@ -252,7 +252,7 @@ class CartPoleEnv(gym.Env):
 
 ![gym&mujoco](../../images/gym_mujoco.svg)
 
-### 确认打印关节顺序
+#### 确认打印关节顺序
 ```python
 # 遍历模型中的所有关节
 for i in range(model.njnt):
